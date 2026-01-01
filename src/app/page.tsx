@@ -2,6 +2,7 @@
 import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import AudioPlayer from '@/components/ui/AudioPlayer';
 
 function SectionTitle({
   eyebrow,
@@ -137,23 +138,7 @@ export default function HomePage() {
       <section className="border-b border-black/10 bg-white">
         <Container className="py-8">
           <Card className="p-5">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-[rgb(var(--smg-soft))]" />
-                <div>
-                  <div className="text-sm font-black">SMG Radio — Live</div>
-                  <div className="mt-1 text-xs text-black/60">
-                    Now Playing: Sports Beats Mix (demo)
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <Button>▶ Play Live</Button>
-                <Button variant="secondary">🗓 Programación</Button>
-                <Button variant="secondary">❤️ Favoritos</Button>
-              </div>
-            </div>
+            <AudioPlayer compact />
           </Card>
         </Container>
       </section>
