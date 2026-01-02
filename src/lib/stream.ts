@@ -1,19 +1,16 @@
-export type StreamSource = {
-  id: string;
-  name: string;
-  url: string;
-  type: 'audio/mpeg' | 'audio/aac' | 'application/vnd.apple.mpegurl';
-};
+export const RADIO_STREAM_URL =
+  process.env.NEXT_PUBLIC_RADIO_STREAM_URL?.trim() || '';
 
-export const STREAMS: StreamSource[] = [
-  {
-    id: 'smg-demo-mp3',
-    name: 'SMG Radio (Demo MP3)',
-    url: 'https://icecast.omroep.nl/radio1-bb-mp3',
-    type: 'audio/mpeg',
-  },
-];
+export const LIVE_YOUTUBE_ID =
+  process.env.NEXT_PUBLIC_LIVE_YOUTUBE_ID?.trim() || '';
 
-export function getDefaultStream(): StreamSource {
-  return STREAMS[0];
+export function isLikelyAudioStream(url: string) {
+  const u = (url || '').toLowerCase();
+  return (
+    u.endsWith('.mp3') ||
+    u.endsWith('.aac') ||
+    u.endsWith('.m3u8') ||
+    u.endsWith('.m3u') ||
+    u.includes('stream')
+  );
 }

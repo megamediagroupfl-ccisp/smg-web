@@ -1,144 +1,170 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Button from '@/components/ui/Button';
+import Link from 'next/link';
 import Card from '@/components/ui/Card';
-import { getDefaultStream } from '@/lib/stream';
+import Button from '@/components/ui/Button';
 
-type Props = {
-  compact?: boolean;
-};
+type Status = 'idle' | 'loading' | 'playing' | 'paused' | 'error';
 
-export default function AudioPlayer({ compact }: Props) {
-  const stream = useMemo(() => getDefaultStream(), []);
+export default function AudioPlayer({ compact = false }: { compact?: boolean }) {
+  const streamUrl = useMemo(
+    () => process.env.NEXT_PUBLIC_RADIO_STREAM_URL || '',
+    []
+  );
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [status, setStatus] = useState<Status>('idle');
+  const [errorMsg, setErrorMsg] = useState<string>('');
 
-  const [isReady, setIsReady] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [status, setStatus] = useState<string>('Listo');
+  const showStop = status === 'playing' || status === 'loading';
 
   useEffect(() => {
-    const el = audioRef.current;
-    if (!el) return;
+    // Crear audio una sola vez
+    audioRef.current = new Audio();
+    audioRef.current.preload = 'none';
+    audioRef.current.crossOrigin = 'anonymous';
 
-    const onCanPlay = () => {
-      setIsReady(true);
-      setStatus('Listo');
-    };
-    const onPlay = () => {
-      setIsPlaying(true);
-      setStatus('Reproduciendo');
-    };
-    const onPause = () => {
-      setIsPlaying(false);
-      setStatus('Pausado');
-    };
-    const onWaiting = () => setStatus('Cargando…');
+    const a = audioRef.current;
+
+    const onPlaying = () => setStatus('playing');
+    const onWaiting = () => setStatus('loading');
+    const onPause = () => setStatus('paused');
+    const onEnded = () => setStatus('idle');
     const onError = () => {
-      setIsPlaying(false);
-      setIsReady(false);
-      setStatus(
-        'No se pudo reproducir. Asegúrate de dar click en Play y que el enlace sea un stream directo (.mp3/.aac/.m3u8).'
-      );
+      setStatus('error');
+      setErrorMsg('No se pudo reproducir el stream. Verifica que sea un enlace directo (.mp3/.aac/.m3u8).');
     };
 
-    el.addEventListener('canplay', onCanPlay);
-    el.addEventListener('play', onPlay);
-    el.addEventListener('pause', onPause);
-    el.addEventListener('waiting', onWaiting);
-    el.addEventListener('error', onError);
+    a.addEventListener('playing', onPlaying);
+    a.addEventListener('waiting', onWaiting);
+    a.addEventListener('pause', onPause);
+    a.addEventListener('ended', onEnded);
+    a.addEventListener('error', onError);
 
     return () => {
-      el.removeEventListener('canplay', onCanPlay);
-      el.removeEventListener('play', onPlay);
-      el.removeEventListener('pause', onPause);
-      el.removeEventListener('waiting', onWaiting);
-      el.removeEventListener('error', onError);
+      a.pause();
+      a.src = '';
+      a.load();
+      a.removeEventListener('playing', onPlaying);
+      a.removeEventListener('waiting', onWaiting);
+      a.removeEventListener('pause', onPause);
+      a.removeEventListener('ended', onEnded);
+      a.removeEventListener('error', onError);
     };
   }, []);
 
   async function handlePlay() {
-    const el = audioRef.current;
-    if (!el) return;
+    setErrorMsg('');
+
+    if (!streamUrl) {
+      setStatus('error');
+      setErrorMsg('Configura NEXT_PUBLIC_RADIO_STREAM_URL en .env.local y reinicia npm run dev.');
+      return;
+    }
+
+    const a = audioRef.current;
+    if (!a) return;
 
     try {
-      setStatus('Cargando…');
-      // Garantiza el src correcto
-      if (el.src !== stream.url) el.src = stream.url;
+      // Fuerza el estado a loading inmediatamente para que aparezca STOP al instante
+      setStatus('loading');
 
-      await el.play(); // requiere click del usuario (ok)
+      // Si cambiaste el stream, asegúrate de setear src
+      if (a.src !== streamUrl) {
+        a.src = streamUrl;
+      }
+
+      // Intentar reproducir
+      await a.play();
+      // El evento "playing" pondrá status=playing
     } catch (e) {
-      setStatus(
-        'El navegador bloqueó la reproducción. Haz click nuevamente y verifica que el link sea un stream directo.'
-      );
+      setStatus('error');
+      setErrorMsg('El navegador bloqueó la reproducción. Haz click nuevamente en Play o revisa el stream.');
     }
   }
 
-  function handlePause() {
-    const el = audioRef.current;
-    if (!el) return;
-    el.pause();
-  }
-
   function handleStop() {
-    const el = audioRef.current;
-    if (!el) return;
-    el.pause();
-    el.currentTime = 0;
-    setIsPlaying(false);
-    setStatus('Detenido');
+    const a = audioRef.current;
+    if (!a) return;
+
+    a.pause();
+    // reset duro para streams
+    a.src = '';
+    a.load();
+    setStatus('idle');
+    setErrorMsg('');
   }
 
-  const Shell = compact ? 'div' : Card;
-
-  return (
-    <Shell className={compact ? '' : 'p-6'}>
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-[rgb(var(--smg-soft))]" />
-          <div>
-            <div className="text-sm font-black">{stream.name}</div>
-            <div className="mt-1 text-xs text-black/60">
-              Estado: <span className="font-bold">{status}</span>
+  // UI compact (Home mini player)
+  if (compact) {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-[rgb(var(--smg-soft))]" />
+            <div>
+              <div className="text-sm font-black">SMG Radio — Live</div>
+              <div className="mt-1 text-xs text-black/60">
+                {streamUrl ? 'Stream listo (demo)' : 'Configura NEXT_PUBLIC_RADIO_STREAM_URL en .env.local'}
+              </div>
             </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {!showStop ? (
+              <Button onClick={handlePlay}>▶ Play</Button>
+            ) : (
+              <Button variant="secondary" onClick={handleStop}>
+                ⏹ Stop
+              </Button>
+            )}
+
+            <Link href="/radio">
+              <Button variant="secondary">Ir a Radio</Button>
+            </Link>
+          </div>
+        </div>
+
+        {errorMsg ? (
+          <div className="text-xs font-semibold text-[rgb(var(--smg-red))]">
+            {errorMsg}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  // UI completa (/radio)
+  return (
+    <Card className="p-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <div className="text-sm font-black">Radio</div>
+          <div className="mt-1 text-xs text-black/60">
+            {streamUrl ? streamUrl : 'Configura NEXT_PUBLIC_RADIO_STREAM_URL en .env.local'}
+          </div>
+          <div className="mt-2 text-xs text-black/60">
+            Estado: <span className="font-bold">{status}</span>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {isPlaying ? (
-            <Button variant="secondary" onClick={handlePause}>
-              ⏸ Pausa
-            </Button>
+          {!showStop ? (
+            <Button onClick={handlePlay}>▶ Play</Button>
           ) : (
-            <Button onClick={handlePlay}>
-              ▶ Play
+            <Button variant="secondary" onClick={handleStop}>
+              ⏹ Stop
             </Button>
           )}
-
-          <Button variant="secondary" onClick={handleStop}>
-            ⏹ Stop
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={() => {
-              navigator.clipboard?.writeText(stream.url);
-              setStatus('Link copiado');
-              setTimeout(() => setStatus(isPlaying ? 'Reproduciendo' : 'Listo'), 1200);
-            }}
-          >
-            🔗 Copiar link
-          </Button>
         </div>
       </div>
 
-      {/* Audio element oculto */}
-      <audio ref={audioRef} preload="none" />
-      {!compact ? (
-        <div className="mt-4 text-xs text-black/60">
-          Tip: Los navegadores bloquean autoplay. Aquí funciona con click. Link de prueba: <span className="font-bold">.mp3</span>
+      {errorMsg ? (
+        <div className="mt-3 text-xs font-semibold text-[rgb(var(--smg-red))]">
+          {errorMsg}
         </div>
       ) : null}
-    </Shell>
+    </Card>
   );
 }

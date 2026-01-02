@@ -1,33 +1,35 @@
-'use client';
+import Card from '@/components/ui/Card';
+import { LIVE_YOUTUBE_ID } from '@/lib/stream';
 
-type Props = {
-  videoId?: string;
+export default function LiveEmbed({
+  title = 'SMG Live',
+}: {
   title?: string;
-};
-
-export default function LiveEmbed({ videoId, title }: Props) {
-  const id = videoId || process.env.NEXT_PUBLIC_YT_LIVE_VIDEO_ID || '';
-  const t = title || 'SMG Live';
+}) {
+  const id = LIVE_YOUTUBE_ID;
 
   if (!id) {
     return (
-      <div className="flex h-full w-full items-center justify-center rounded-xl border border-black/10 bg-[rgb(var(--smg-soft))] p-6 text-sm text-black/70">
-        Live no configurado aún. Agrega <b>NEXT_PUBLIC_YT_LIVE_VIDEO_ID</b> en <b>.env.local</b>.
-      </div>
+      <Card className="p-6">
+        <div className="text-sm font-black">{title}</div>
+        <div className="mt-2 text-sm text-black/60">
+          Configura NEXT_PUBLIC_LIVE_YOUTUBE_ID en .env.local
+        </div>
+      </Card>
     );
   }
 
-  const src = `https://www.youtube.com/embed/${id}?autoplay=0&mute=0&rel=0&modestbranding=1`;
-
   return (
-    <div className="aspect-video w-full overflow-hidden rounded-xl border border-black/10 bg-black">
-      <iframe
-        className="h-full w-full"
-        src={src}
-        title={t}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-      />
+    <div className="overflow-hidden rounded-xl border border-black/10 bg-white">
+      <div className="aspect-video w-full">
+        <iframe
+          className="h-full w-full"
+          src={`https://www.youtube.com/embed/${id}?autoplay=0&mute=1&playsinline=1`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      </div>
     </div>
   );
 }
