@@ -1,126 +1,49 @@
-// src/app/world-cup-2026/page.tsx
-import Link from 'next/link';
-
 import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import Link from 'next/link';
 
-export default function WorldCupHubPage() {
+const NEWS = [
+  { title: 'Última hora: Rumores / fichajes / clasificación', meta: 'Actualizado • 2 min' },
+  { title: 'Top 5 historias del día (formato Sports Desk)', meta: 'Highlights • 6 min' },
+  { title: 'Análisis: cómo llega cada selección al 2026', meta: 'Análisis • 8 min' },
+  { title: 'SDQ Sound: playlist “Stadium Vibes” para hoy', meta: 'Música • 3 min' },
+];
+
+export default function WorldCupNewsPage() {
   return (
     <div className="bg-white">
-      {/* HERO / HEADER */}
       <section className="border-b border-black/10 bg-[rgb(var(--smg-soft))]">
         <Container className="py-10">
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-extrabold">
-                <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
-                WORLD CUP 2026
+              <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">
+                World Cup 2026
               </div>
-
-              <h1 className="mt-3 text-3xl font-black tracking-tight">Road to FIFA World Cup 2026</h1>
+              <h1 className="mt-2 text-3xl font-black tracking-tight">News</h1>
               <p className="mt-2 text-sm text-black/70">
-                News, host cities, countdown, highlights and trivia — todo en un solo hub.
+                Actualizaciones rápidas tipo sports desk (listas para redes).
               </p>
             </div>
-
-            <div className="grid w-full gap-2 md:w-auto md:grid-cols-3">
-              {/* ✅ QUICK NAV */}
-              <Link href="/world-cup-2026/news">
-                <Button className="w-full" variant="secondary">
-                  Ver News
-                </Button>
-              </Link>
-
-              <Link href="/world-cup-2026/host-cities">
-                <Button className="w-full" variant="secondary">
-                  Ver Sedes
-                </Button>
-              </Link>
-
-              <Link href="/world-cup-2026/countdown">
-                <Button className="w-full" variant="secondary">
-                  Ver Countdown
-                </Button>
-              </Link>
-            </div>
+            <Link href="/world-cup-2026">
+              <Button variant="secondary">← Volver al Hub</Button>
+            </Link>
           </div>
         </Container>
       </section>
 
-      {/* CONTENT */}
       <Container className="py-10">
-        <div className="grid gap-4 md:grid-cols-3">
-          {/* NEWS */}
-          <Card className="p-6">
-            <div className="text-sm font-black">News</div>
-            <div className="mt-2 text-sm text-black/60">Actualizaciones rápidas tipo sports desk.</div>
-            <div className="mt-4">
-              <Link href="/world-cup-2026/news">
-                <Button className="w-full" variant="secondary">
-                  Ver
-                </Button>
-              </Link>
-            </div>
-          </Card>
-
-          {/* HOST CITIES */}
-          <Card className="p-6">
-            <div className="text-sm font-black">Host Cities</div>
-            <div className="mt-2 text-sm text-black/60">Sedes + cultura + música por ciudad.</div>
-            <div className="mt-4">
-              <Link href="/world-cup-2026/host-cities">
-                <Button className="w-full" variant="secondary">
-                  Ver
-                </Button>
-              </Link>
-            </div>
-          </Card>
-
-          {/* COUNTDOWN */}
-          <Card className="p-6">
-            <div className="text-sm font-black">Countdown</div>
-            <div className="mt-2 text-sm text-black/60">Cuenta regresiva + agenda de eventos.</div>
-            <div className="mt-4">
-              <Link href="/world-cup-2026/countdown">
-                <Button className="w-full" variant="secondary">
-                  Ver
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        </div>
-
-        {/* SECONDARY CTA */}
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <Card className="p-6">
-            <div className="text-sm font-black">Highlights</div>
-            <div className="mt-2 text-sm text-black/60">
-              Clips, tendencias, trivia y piezas rápidas listas para redes.
-            </div>
-            <div className="mt-4">
-              <Link href="/world-cup-2026/news">
-                <Button className="w-full" variant="secondary">
-                  Abrir Highlights (News)
-                </Button>
-              </Link>
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <div className="text-sm font-black">Ir a Sedes</div>
-            <div className="mt-2 text-sm text-black/60">
-              Conoce las ciudades anfitrionas y su cultura + música.
-            </div>
-            <div className="mt-4">
-              {/* ✅ CAMBIO 3.3 */}
-              <Link href="/world-cup-2026/host-cities">
-                <Button className="w-full" variant="secondary">
-                  Ir a Sedes
-                </Button>
-              </Link>
-            </div>
-          </Card>
+        <div className="grid gap-4 md:grid-cols-2">
+          {NEWS.map((n) => (
+            <Card key={n.title} className="p-6">
+              <div className="text-sm font-black">{n.title}</div>
+              <div className="mt-2 text-xs text-black/60">{n.meta}</div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <Button variant="secondary">Abrir</Button>
+                <Button variant="secondary">Compartir</Button>
+              </div>
+            </Card>
+          ))}
         </div>
       </Container>
     </div>
