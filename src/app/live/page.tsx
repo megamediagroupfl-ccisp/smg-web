@@ -2,6 +2,7 @@ import Container from '@/components/layout/Container';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import LiveEmbed from '@/components/ui/LiveEmbed';
+import Link from 'next/link';
 
 const UPCOMING = {
   title: 'Interview + World Cup Trivia',
@@ -9,13 +10,17 @@ const UPCOMING = {
   notes: '30–45 min • Clips para redes • Invitado semanal',
 };
 
-const REPLAYS = [
-  { title: 'Replay 01 — Road to 2026: Host Cities', meta: 'Highlights • 18 min' },
-  { title: 'Replay 02 — Music + Sports Culture', meta: 'Interview • 24 min' },
-  { title: 'Replay 03 — Trivia Night (Top Moments)', meta: 'Live cut • 12 min' },
-  { title: 'Replay 04 — SDQ Spotlight: Stadium Vibes', meta: 'Music • 15 min' },
-  { title: 'Replay 05 — Match Watch-along (Best takes)', meta: 'Commentary • 22 min' },
-  { title: 'Replay 06 — Fans & Culture: USA/MEX/CAN', meta: 'Culture • 20 min' },
+const REPLAYS: Array<{ title: string; meta: string; slug: string }> = [
+  { title: 'Replay 01 — Road to 2026: Host Cities', meta: 'Highlights • 18 min', slug: 'host-cities' },
+  {
+    title: 'Replay 02 — Music + Sports Culture',
+    meta: 'Interview • 24 min',
+    slug: 'music-sports-culture',
+  },
+  { title: 'Replay 03 — Trivia Night (Top Moments)', meta: 'Live cut • 12 min', slug: 'trivia-night' },
+  { title: 'Replay 04 — SDQ Spotlight: Stadium Vibes', meta: 'Music • 15 min', slug: 'sdq-stadium-vibes' },
+  { title: 'Replay 05 — Match Watch-along (Best takes)', meta: 'Commentary • 22 min', slug: 'match-watch-along' },
+  { title: 'Replay 06 — Fans & Culture: USA/MEX/CAN', meta: 'Culture • 20 min', slug: 'fans-culture' },
 ];
 
 const CLIPS = [
@@ -134,6 +139,7 @@ export default function LivePage() {
             subtitle="Contenido evergreen + highlights (ideal para monetizar y crecer)."
             right={<Button variant="secondary">Ver todo</Button>}
           />
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {REPLAYS.map((r) => (
               <Card key={r.title} className="overflow-hidden">
@@ -142,7 +148,11 @@ export default function LivePage() {
                   <div className="text-sm font-black">{r.title}</div>
                   <div className="mt-1 text-xs text-black/60">{r.meta}</div>
                   <div className="mt-4 grid grid-cols-2 gap-2">
-                    <Button variant="secondary">▶ Play</Button>
+                    <Link href={`/live/replay/${r.slug}`} className="block">
+                      <Button variant="secondary" className="w-full">
+                        ▶ Play
+                      </Button>
+                    </Link>
                     <Button variant="secondary">↗ Share</Button>
                   </div>
                 </div>
