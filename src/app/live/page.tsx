@@ -1,6 +1,7 @@
 import Container from '@/components/layout/Container';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import LiveEmbed from '@/components/ui/LiveEmbed';
 
 export default function LivePage() {
   return (
@@ -28,7 +29,9 @@ export default function LivePage() {
 
       <Container className="py-10">
         <Card className="overflow-hidden">
-          <div className="aspect-video bg-gradient-to-br from-black/10 to-black/0" />
+          {/* LIVE VIDEO */}
+          <LiveEmbed title="SMG Live — Road to 2026" />
+
           <div className="p-6">
             <div className="text-sm font-extrabold">World Cup Talk — Road to 2026</div>
             <div className="mt-1 text-xs text-black/60">Hosted by SMG • Studio Live</div>

@@ -3,6 +3,7 @@ import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import AudioPlayer from '@/components/ui/AudioPlayer';
+import LiveEmbed from '@/components/ui/LiveEmbed';
 
 function SectionTitle({
   eyebrow,
@@ -103,7 +104,7 @@ export default function HomePage() {
               </div>
 
               <div className="p-4">
-                <div className="aspect-video w-full rounded-xl bg-gradient-to-br from-black/10 to-black/0" />
+                <LiveEmbed title="SMG Live" />
                 <div className="mt-4">
                   <div className="inline-flex items-center gap-2 rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-extrabold">
                     ▶ Live Preview
