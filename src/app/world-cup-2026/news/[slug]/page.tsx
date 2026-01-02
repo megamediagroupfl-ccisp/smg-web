@@ -5,51 +5,55 @@ import Link from 'next/link';
 
 const NEWS_DATA: Record<
   string,
-  { title: string; meta: string; summary: string; bullets: string[] }
+  { title: string; meta: string; summary: string; bullets: string[]; cta: string }
 > = {
   'rumores-fichajes': {
     title: 'Rumores y fichajes del día',
     meta: '5 min • Actualizado',
     summary:
-      'Resumen rápido con enfoque social-first: lo más comentado, lo más compartible y lo que conviene convertir en clips.',
+      'Resumen rápido para redes: lo que se mueve hoy en fichajes, rumores y posibles cambios de plantilla rumbo a 2026.',
     bullets: [
-      'Top 3 rumores (formato corto)',
-      'Qué es real vs qué es humo',
-      'Idea de clip + caption sugerido',
+      'Top 3 rumores del día (demo).',
+      'Jugador destacado + impacto en selección.',
+      'Idea de clip vertical: “1 rumor en 15s”.',
     ],
+    cta: 'Crear post',
   },
   'clasificacion-escenarios': {
     title: 'Clasificación y escenarios',
     meta: 'Análisis • 8 min',
     summary:
-      'Lectura clara y rápida: escenarios, tendencias y lo que la audiencia hispana quiere entender sin complicaciones.',
+      'Lectura simple tipo “sports desk”: escenarios posibles, favoritos y qué necesita cada selección (demo).',
     bullets: [
-      'Tabla/escenario explicado simple',
-      'Qué selecciones suben/bajan',
-      'Idea de carrusel para Instagram',
+      'Tabla rápida + tendencia (demo).',
+      '3 escenarios: optimista / realista / sorpresa.',
+      'Idea de segmento: “¿Qué necesita X para clasificar?”',
     ],
+    cta: 'Crear análisis',
   },
   'top-clips-redes': {
     title: 'Top clips para redes',
     meta: '30–60s • Viral',
     summary:
-      'Selección de momentos que se prestan para Shorts/Reels/TikTok con gancho + CTA.',
+      'Plantilla de clips listos para TikTok/Reels/Shorts con gancho musical SDQ (demo).',
     bullets: [
-      '3 hooks recomendados',
-      'Estructura 0–3s / 3–20s / 20–45s',
-      'CTA para comentarios (engagement)',
+      'Hook (0–2s) + dato (3–10s) + remate (11–20s).',
+      'Formato 9:16 recomendado.',
+      'CTA: “Comenta tu predicción”.',
     ],
+    cta: 'Crear clip',
   },
   'calendario-semanal': {
     title: 'Calendario semanal',
     meta: 'Agenda • World Cup',
     summary:
-      'Agenda tipo “qué no te puedes perder”, para convertir en contenido diario y programación en radio.',
+      'Agenda de contenido SMG (demo): qué publicar cada día para mantener ritmo, comunidad y crecimiento.',
     bullets: [
-      'Eventos clave (demo)',
-      'Ideas de especiales en vivo',
-      'Checklist de publicaciones',
+      'Lunes: noticias rápidas + 1 clip.',
+      'Miércoles: host city focus + playlist.',
+      'Viernes: trivia + live short.',
     ],
+    cta: 'Ver plan',
   },
 };
 
@@ -57,27 +61,36 @@ function normalizeSlug(raw?: string) {
   return (raw ?? '').toLowerCase().trim();
 }
 
-export default async function WorldCupNewsDetailPage({
+export default function WorldCupNewsDetailPage({
   params,
 }: {
-  params: Promise<{ slug?: string }>;
+  params: { slug?: string };
 }) {
-  const { slug } = await params;
-  const key = normalizeSlug(slug);
-  const data = NEWS_DATA[key];
+  const slug = normalizeSlug(params?.slug);
+  const data = slug ? NEWS_DATA[slug] : undefined;
 
   if (!data) {
     return (
       <div className="bg-white">
+        <section className="border-b border-black/10 bg-[rgb(var(--smg-soft))]">
+          <Container className="py-10">
+            <h1 className="text-3xl font-black tracking-tight">News</h1>
+            <p className="mt-2 text-sm text-black/70">Artículo no encontrado.</p>
+          </Container>
+        </section>
+
         <Container className="py-10">
           <Card className="p-6">
-            <div className="text-lg font-black">Not found</div>
+            <div className="text-sm font-black">No existe este contenido.</div>
             <div className="mt-2 text-sm text-black/60">
-              Esta nota no existe todavía (demo).
+              Vuelve al hub o selecciona otra noticia.
             </div>
-            <div className="mt-4">
+            <div className="mt-4 flex gap-2">
               <Link href="/world-cup-2026/news">
                 <Button variant="secondary">← Volver a News</Button>
+              </Link>
+              <Link href="/world-cup-2026">
+                <Button variant="secondary">← Volver al Hub</Button>
               </Link>
             </div>
           </Card>
@@ -93,7 +106,7 @@ export default async function WorldCupNewsDetailPage({
           <div className="flex items-end justify-between gap-4">
             <div>
               <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">
-                World Cup 2026 • News
+                World Cup 2026
               </div>
               <h1 className="mt-2 text-3xl font-black tracking-tight">{data.title}</h1>
               <p className="mt-2 text-sm text-black/70">{data.meta}</p>
@@ -103,32 +116,45 @@ export default async function WorldCupNewsDetailPage({
               <Link href="/world-cup-2026/news">
                 <Button variant="secondary">← Volver</Button>
               </Link>
-              <Button>Compartir</Button>
+              <Button>{data.cta}</Button>
             </div>
           </div>
         </Container>
       </section>
 
       <Container className="py-10">
-        <Card className="p-6">
-          <div className="text-sm font-black">Resumen</div>
-          <div className="mt-2 text-sm text-black/70">{data.summary}</div>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <Card className="p-6 lg:col-span-2">
+            <div className="text-sm font-black">Resumen</div>
+            <div className="mt-2 text-sm text-black/70">{data.summary}</div>
 
-          <div className="mt-6">
-            <div className="text-sm font-black">Acciones recomendadas</div>
-            <ul className="mt-3 list-disc pl-5 text-sm text-black/70 space-y-2">
+            <div className="mt-6 text-sm font-black">Puntos clave</div>
+            <ul className="mt-3 space-y-2 text-sm text-black/70">
               {data.bullets.map((b) => (
-                <li key={b}>{b}</li>
+                <li key={b}>• {b}</li>
               ))}
             </ul>
-          </div>
 
-          <div className="mt-6 grid gap-2 md:grid-cols-3">
-            <Button variant="secondary">Crear post</Button>
-            <Button variant="secondary">Crear clip</Button>
-            <Button variant="secondary">Guion rápido</Button>
-          </div>
-        </Card>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Button variant="secondary">Guardar</Button>
+              <Button variant="secondary">Compartir</Button>
+              <Button variant="secondary">Convertir en guion</Button>
+            </div>
+          </Card>
+
+          <Card className="p-6">
+            <div className="text-sm font-black">Acciones rápidas</div>
+            <div className="mt-3 grid gap-2">
+              <Button variant="secondary">🎬 Generar clip (demo)</Button>
+              <Button variant="secondary">🎧 Sugerir música SDQ</Button>
+              <Button variant="secondary">🗓 Programar post</Button>
+            </div>
+
+            <div className="mt-6 text-xs text-black/60">
+              Nota: aquí luego conectamos datos reales + CMS.
+            </div>
+          </Card>
+        </div>
       </Container>
     </div>
   );
