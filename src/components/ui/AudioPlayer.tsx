@@ -1,170 +1,147 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
-import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 
-type Status = 'idle' | 'loading' | 'playing' | 'paused' | 'error';
+type Status = 'idle' | 'loading' | 'playing' | 'paused' | 'stopped' | 'error';
 
-export default function AudioPlayer({ compact = false }: { compact?: boolean }) {
-  const streamUrl = useMemo(
-    () => process.env.NEXT_PUBLIC_RADIO_STREAM_URL || '',
-    []
-  );
-
+export default function AudioPlayer({
+  compact,
+}: {
+  compact?: boolean;
+}) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const streamUrl = useMemo(() => {
+    return process.env.NEXT_PUBLIC_RADIO_STREAM_URL || '';
+  }, []);
+
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
 
-  const showStop = status === 'playing' || status === 'loading';
+  const canUse = !!streamUrl;
 
-  useEffect(() => {
-    // Crear audio una sola vez
-    audioRef.current = new Audio();
-    audioRef.current.preload = 'none';
-    audioRef.current.crossOrigin = 'anonymous';
+  // Toggle Play/Stop (un solo botón)
+  const togglePlayStop = async () => {
+    const el = audioRef.current;
+    if (!el) return;
 
-    const a = audioRef.current;
-
-    const onPlaying = () => setStatus('playing');
-    const onWaiting = () => setStatus('loading');
-    const onPause = () => setStatus('paused');
-    const onEnded = () => setStatus('idle');
-    const onError = () => {
-      setStatus('error');
-      setErrorMsg('No se pudo reproducir el stream. Verifica que sea un enlace directo (.mp3/.aac/.m3u8).');
-    };
-
-    a.addEventListener('playing', onPlaying);
-    a.addEventListener('waiting', onWaiting);
-    a.addEventListener('pause', onPause);
-    a.addEventListener('ended', onEnded);
-    a.addEventListener('error', onError);
-
-    return () => {
-      a.pause();
-      a.src = '';
-      a.load();
-      a.removeEventListener('playing', onPlaying);
-      a.removeEventListener('waiting', onWaiting);
-      a.removeEventListener('pause', onPause);
-      a.removeEventListener('ended', onEnded);
-      a.removeEventListener('error', onError);
-    };
-  }, []);
-
-  async function handlePlay() {
-    setErrorMsg('');
-
-    if (!streamUrl) {
-      setStatus('error');
-      setErrorMsg('Configura NEXT_PUBLIC_RADIO_STREAM_URL en .env.local y reinicia npm run dev.');
+    // Si está reproduciendo -> STOP (pausa + vuelve al inicio)
+    if (!el.paused && !el.ended) {
+      el.pause();
+      try {
+        el.currentTime = 0;
+      } catch {
+        // algunos streams no permiten currentTime; no pasa nada
+      }
+      setStatus('stopped');
+      setErrorMsg('');
       return;
     }
 
-    const a = audioRef.current;
-    if (!a) return;
+    // Si no está reproduciendo -> PLAY
+    setStatus('loading');
+    setErrorMsg('');
 
     try {
-      // Fuerza el estado a loading inmediatamente para que aparezca STOP al instante
-      setStatus('loading');
+      // Forzamos carga antes de play (ayuda a algunos streams)
+      el.load();
 
-      // Si cambiaste el stream, asegúrate de setear src
-      if (a.src !== streamUrl) {
-        a.src = streamUrl;
+      const p = el.play();
+      if (p && typeof p.then === 'function') {
+        await p;
       }
-
-      // Intentar reproducir
-      await a.play();
-      // El evento "playing" pondrá status=playing
-    } catch (e) {
+      // Ojo: el estado real lo consolidan los eventos "playing"/"pause"
+      // pero dejamos un status provisional si el navegador tarda:
+      setStatus('playing');
+      setErrorMsg('');
+    } catch (err: any) {
+      // Esto pasa por autoplay bloqueado o stream incompatible
       setStatus('error');
-      setErrorMsg('El navegador bloqueó la reproducción. Haz click nuevamente en Play o revisa el stream.');
+      setErrorMsg(
+        'No se pudo reproducir el stream. Verifica que sea un enlace directo (.mp3/.aac).'
+      );
     }
-  }
+  };
 
-  function handleStop() {
-    const a = audioRef.current;
-    if (!a) return;
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
 
-    a.pause();
-    // reset duro para streams
-    a.src = '';
-    a.load();
-    setStatus('idle');
-    setErrorMsg('');
-  }
+    const onPlaying = () => {
+      setStatus('playing');
+      setErrorMsg('');
+    };
 
-  // UI compact (Home mini player)
-  if (compact) {
-    return (
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-[rgb(var(--smg-soft))]" />
-            <div>
-              <div className="text-sm font-black">SMG Radio — Live</div>
-              <div className="mt-1 text-xs text-black/60">
-                {streamUrl ? 'Stream listo (demo)' : 'Configura NEXT_PUBLIC_RADIO_STREAM_URL en .env.local'}
-              </div>
-            </div>
-          </div>
+    const onPause = () => {
+      // Si el usuario pausó/stop
+      if (status !== 'error') setStatus('paused');
+    };
 
-          <div className="flex flex-wrap gap-2">
-            {!showStop ? (
-              <Button onClick={handlePlay}>▶ Play</Button>
-            ) : (
-              <Button variant="secondary" onClick={handleStop}>
-                ⏹ Stop
-              </Button>
-            )}
+    const onWaiting = () => {
+      setStatus('loading');
+    };
 
-            <Link href="/radio">
-              <Button variant="secondary">Ir a Radio</Button>
-            </Link>
-          </div>
+    const onError = () => {
+      // A veces algunos streams disparan error al inicio pero luego “enganchan”.
+      // No vamos a “clavar” error si luego llega playing.
+      setStatus('error');
+      setErrorMsg(
+        'No se pudo reproducir el stream. Verifica que sea un enlace directo (.mp3/.aac).'
+      );
+    };
+
+    el.addEventListener('playing', onPlaying);
+    el.addEventListener('pause', onPause);
+    el.addEventListener('waiting', onWaiting);
+    el.addEventListener('error', onError);
+
+    return () => {
+      el.removeEventListener('playing', onPlaying);
+      el.removeEventListener('pause', onPause);
+      el.removeEventListener('waiting', onWaiting);
+      el.removeEventListener('error', onError);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const isPlaying = (() => {
+    const el = audioRef.current;
+    return el ? !el.paused && !el.ended : status === 'playing';
+  })();
+
+  const label = !canUse
+    ? 'Configurar'
+    : isPlaying
+    ? '⏹ Stop'
+    : status === 'loading'
+    ? '⏳ Cargando...'
+    : '▶ Play';
+
+  return (
+    <div className={compact ? 'flex items-center justify-between gap-3' : 'space-y-3'}>
+      {/* Audio element */}
+      <audio ref={audioRef} src={streamUrl} preload="none" />
+
+      <div className={compact ? 'min-w-0' : ''}>
+        <div className="text-sm font-black">Radio</div>
+        <div className="mt-1 text-xs text-black/60 break-all">
+          {canUse ? streamUrl : 'Configura NEXT_PUBLIC_RADIO_STREAM_URL en .env.local'}
         </div>
-
+        <div className="mt-1 text-xs text-black/60">Estado: {status}</div>
         {errorMsg ? (
-          <div className="text-xs font-semibold text-[rgb(var(--smg-red))]">
-            {errorMsg}
-          </div>
+          <div className="mt-1 text-xs font-semibold text-red-600">{errorMsg}</div>
         ) : null}
       </div>
-    );
-  }
 
-  // UI completa (/radio)
-  return (
-    <Card className="p-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <div className="text-sm font-black">Radio</div>
-          <div className="mt-1 text-xs text-black/60">
-            {streamUrl ? streamUrl : 'Configura NEXT_PUBLIC_RADIO_STREAM_URL en .env.local'}
-          </div>
-          <div className="mt-2 text-xs text-black/60">
-            Estado: <span className="font-bold">{status}</span>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {!showStop ? (
-            <Button onClick={handlePlay}>▶ Play</Button>
-          ) : (
-            <Button variant="secondary" onClick={handleStop}>
-              ⏹ Stop
-            </Button>
-          )}
-        </div>
+      <div className={compact ? 'shrink-0' : ''}>
+        <Button
+          onClick={togglePlayStop}
+          disabled={!canUse || status === 'loading'}
+        >
+          {label}
+        </Button>
       </div>
-
-      {errorMsg ? (
-        <div className="mt-3 text-xs font-semibold text-[rgb(var(--smg-red))]">
-          {errorMsg}
-        </div>
-      ) : null}
-    </Card>
+    </div>
   );
 }
