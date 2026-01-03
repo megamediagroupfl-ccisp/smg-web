@@ -1,4 +1,5 @@
 // src/app/page.tsx
+import Link from 'next/link';
 import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -40,13 +41,15 @@ export default function HomePage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/media/home/hero.jpg')" }}
+          aria-label="Hero background"
         />
-        {/* Overlay para legibilidad */}
+        {/* Overlays para legibilidad */}
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
 
         <Container className="relative py-12 md:py-16">
           <div className="grid items-center gap-8 md:grid-cols-2">
+            {/* LEFT */}
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
                 <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
@@ -70,15 +73,21 @@ export default function HomePage() {
                   24/7, En Vivo, Podcast y cobertura del camino a la Copa Mundial 2026.
                 </p>
                 <p>
-                  <span className="font-extrabold">EN:</span> Sports media + original music. Radio
-                  24/7, Live shows, Podcast and Road to World Cup 2026 coverage.
+                  <span className="font-extrabold">EN:</span> Sports media + original music. Radio 24/7,
+                  Live shows, Podcast and Road to World Cup 2026 coverage.
                 </p>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button>▶ Watch Live</Button>
-                <Button variant="secondary">🎧 Listen Radio</Button>
-                <Button variant="secondary">🏆 World Cup 2026</Button>
+                <Link href="/live">
+                  <Button>▶ Watch Live</Button>
+                </Link>
+                <Link href="/radio">
+                  <Button variant="secondary">🎧 Listen Radio</Button>
+                </Link>
+                <Link href="/world-cup-2026">
+                  <Button variant="secondary">🏆 World Cup 2026</Button>
+                </Link>
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -100,44 +109,58 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* LIVE CARD */}
-            <Card className="overflow-hidden border-white/15 bg-white/10 text-white backdrop-blur">
-              <div className="flex items-center justify-between border-b border-white/15 bg-white/5 px-4 py-3">
-                <div className="inline-flex items-center gap-2 text-xs font-extrabold">
-                  <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
-                  LIVE NOW
+            {/* RIGHT: LIVE CARD (ahora glass/transparente) */}
+            <div>
+              <div className="rounded-2xl border border-white/15 bg-white/10 shadow-lg backdrop-blur">
+                <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                  <div className="inline-flex items-center gap-2 text-xs font-extrabold text-white">
+                    <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
+                    LIVE NOW
+                  </div>
+                  <div className="text-xs font-semibold text-white/70">SMG Studio</div>
                 </div>
-                <div className="text-xs font-semibold text-white/70">SMG Studio</div>
-              </div>
 
-              <div className="p-4">
-                <div className="aspect-video w-full rounded-xl bg-white/10" />
-                <div className="mt-4">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-extrabold">
-                    ▶ Live Preview
+                <div className="p-4">
+                  <div
+                    className="aspect-video w-full rounded-xl bg-cover bg-center"
+                    style={{ backgroundImage: "url('/media/home/live.jpg')" }}
+                    aria-label="SMG Live cover"
+                  />
+                  <div className="mt-4">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
+                      ▶ Live Preview
+                    </div>
+                  </div>
+
+                  <div className="mt-4 text-sm font-black text-white">
+                    World Cup Talk — Road to 2026
+                  </div>
+                  <div className="mt-1 text-xs text-white/75">
+                    Debate + música • invitado semanal • social-first clips
+                  </div>
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    <Link href="/live" className="w-full">
+                      <Button className="w-full">Watch</Button>
+                    </Link>
+                    <Link href="/live" className="w-full">
+                      <Button className="w-full" variant="secondary">
+                        Replays
+                      </Button>
+                    </Link>
+                  </div>
+
+                  <div className="mt-4 rounded-xl border border-white/10 bg-white/10 p-3 text-white backdrop-blur">
+                    <div className="text-xs font-extrabold text-white/70">NEXT LIVE</div>
+                    <div className="mt-1 text-sm font-bold">Interview + World Cup Trivia</div>
+                    <div className="mt-3 flex justify-end">
+                      <Button variant="secondary">🔔 Remind</Button>
+                    </div>
                   </div>
                 </div>
-                <div className="mt-4 text-sm font-black">World Cup Talk — Road to 2026</div>
-                <div className="mt-1 text-xs text-white/70">
-                  Debate + música • invitado semanal • social-first clips
-                </div>
-
-                <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                  <Button className="w-full">Watch</Button>
-                  <Button className="w-full" variant="secondary">
-                    Replays
-                  </Button>
-                </div>
-
-                <Card className="mt-4 border-white/15 bg-white/10 p-3 text-white">
-                  <div className="text-xs font-extrabold text-white/70">NEXT LIVE</div>
-                  <div className="mt-1 text-sm font-bold">Interview + World Cup Trivia</div>
-                  <div className="mt-3 flex justify-end">
-                    <Button variant="secondary">🔔 Remind</Button>
-                  </div>
-                </Card>
               </div>
-            </Card>
+              {/* fin live card */}
+            </div>
           </div>
         </Container>
       </section>
@@ -156,7 +179,7 @@ export default function HomePage() {
         <Container className="py-10">
           <SectionTitle
             title="Highlights"
-            subtitle="Blocks tipo sports desk: trending, clips, trivia and updates."
+            subtitle="Estilo sports desk: trending, clips, trivia and updates."
             right={<Button variant="secondary">Ver todo</Button>}
           />
 
@@ -167,7 +190,13 @@ export default function HomePage() {
                   <div className="text-xs font-extrabold text-black/50">TRENDING</div>
                   <div className="text-xs font-semibold text-black/50">World Cup • Cultura • Música</div>
                 </div>
-                <div className="mt-3 aspect-[16/9] w-full rounded-xl bg-gradient-to-br from-black/10 to-black/0" />
+
+                <div
+                  className="mt-3 aspect-[16/9] w-full rounded-xl bg-cover bg-center"
+                  style={{ backgroundImage: "url('/media/home/trending.jpg')" }}
+                  aria-label="Trending cover"
+                />
+
                 <div className="mt-4 text-lg font-black">
                   “Camino a 2026”: Host cities + cultura + playlist oficial
                 </div>
@@ -186,7 +215,9 @@ export default function HomePage() {
                     Trivia <span className="font-black">Interactivo</span>
                   </div>
                   <div className="ml-auto">
-                    <Button>Ver</Button>
+                    <Link href="/world-cup-2026">
+                      <Button>Ver</Button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -194,10 +225,10 @@ export default function HomePage() {
 
             <div className="grid gap-4">
               {[
-                { title: 'News', desc: 'Rumores / fichajes / clasificación', tag: 'World Cup' },
-                { title: 'Trivia', desc: 'Reto del día: ¿qué ciudad sede eres?', tag: 'Engagement' },
-                { title: 'Podcast', desc: 'Invitado del deporte + música SDQ', tag: 'Interview' },
-                { title: 'Radio', desc: 'Especial: “Stadium Vibes”', tag: 'Music' },
+                { title: 'News', desc: 'Rumores / fichajes / clasificación', tag: 'World Cup', href: '/world-cup-2026/news' },
+                { title: 'Trivia', desc: 'Reto del día: ¿qué ciudad sede eres?', tag: 'Engagement', href: '/world-cup-2026' },
+                { title: 'Podcast', desc: 'Invitado del deporte + música SDQ', tag: 'Interview', href: '/podcast' },
+                { title: 'Radio', desc: 'Especial: “Stadium Vibes”', tag: 'Music', href: '/radio' },
               ].map((x) => (
                 <Card key={x.title} className="p-5">
                   <div className="flex items-center justify-between gap-3">
@@ -208,9 +239,11 @@ export default function HomePage() {
                   </div>
                   <div className="mt-2 text-sm text-black/60">{x.desc}</div>
                   <div className="mt-4">
-                    <Button variant="secondary" className="w-full">
-                      Abrir
-                    </Button>
+                    <Link href={x.href}>
+                      <Button variant="secondary" className="w-full">
+                        Abrir
+                      </Button>
+                    </Link>
                   </div>
                 </Card>
               ))}
@@ -226,22 +259,28 @@ export default function HomePage() {
             eyebrow="World Cup 2026"
             title="Centro de contenido (70% del feed)"
             subtitle="Noticias • Ciudades sede • Countdown • Cultura • Playlists • Retos"
-            right={<Button>Ir a World Cup</Button>}
+            right={
+              <Link href="/world-cup-2026">
+                <Button>Ir a World Cup</Button>
+              </Link>
+            }
           />
 
           <div className="grid gap-4 md:grid-cols-3">
             {[
-              { title: 'News', desc: 'Actualizaciones rápidas tipo sports desk.' },
-              { title: 'Host Cities', desc: 'Sedes + cultura + música por ciudad.' },
-              { title: 'Countdown', desc: 'Cuenta regresiva + agenda de eventos.' },
+              { title: 'News', desc: 'Actualizaciones rápidas tipo sports desk.', href: '/world-cup-2026/news' },
+              { title: 'Host Cities', desc: 'Sedes + cultura + música por ciudad.', href: '/world-cup-2026/host-cities' },
+              { title: 'Countdown', desc: 'Cuenta regresiva + agenda de eventos.', href: '/world-cup-2026/countdown' },
             ].map((c) => (
               <Card key={c.title} className="p-6">
                 <div className="text-sm font-black">{c.title}</div>
                 <div className="mt-2 text-sm text-black/60">{c.desc}</div>
                 <div className="mt-4">
-                  <Button variant="secondary" className="w-full">
-                    Ver
-                  </Button>
+                  <Link href={c.href}>
+                    <Button variant="secondary" className="w-full">
+                      Ver
+                    </Button>
+                  </Link>
                 </div>
               </Card>
             ))}
@@ -249,31 +288,47 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* PODCAST */}
+      {/* PODCAST (3 ventanas como antes) */}
       <section className="bg-white">
         <Container className="py-10">
           <SectionTitle
             eyebrow="Podcast"
             title="Podcast & Interviews"
             subtitle="Jóvenes talentos + entrevistas a atletas/figuras del deporte."
-            right={<Button variant="secondary">Ver episodios</Button>}
+            right={
+              <Link href="/podcast">
+                <Button variant="secondary">Ver episodios</Button>
+              </Link>
+            }
           />
 
           <div className="grid gap-4 md:grid-cols-3">
-            {[1, 2, 3].map((n) => (
-              <Card key={n} className="overflow-hidden">
+            {[
+              { n: 1, img: '/media/podcast/ep1.jpg' },
+              { n: 2, img: '/media/podcast/ep2.jpg' },
+              { n: 3, img: '/media/podcast/ep3.jpg' },
+            ].map((x) => (
+              <Card key={x.n} className="overflow-hidden">
                 <div className="p-4">
-                  <div className="aspect-[16/10] w-full rounded-xl bg-gradient-to-br from-black/10 to-black/0" />
+                  <div
+                    className="aspect-[16/10] w-full rounded-xl bg-cover bg-center"
+                    style={{ backgroundImage: `url('${x.img}')` }}
+                    aria-label={`Podcast episode ${x.n} cover`}
+                  />
                   <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-extrabold">
                     ▶ Preview
                   </div>
-                  <div className="mt-4 text-sm font-black">Episode {n}: Road to 2026</div>
-                  <div className="mt-1 text-xs text-black/60">
-                    20–35 min • Clip-ready • Social-first
-                  </div>
+                  <div className="mt-4 text-sm font-black">Episode {x.n}: Road to 2026</div>
+                  <div className="mt-1 text-xs text-black/60">20–35 min • Clip-ready • Social-first</div>
                   <div className="mt-4 grid gap-2">
-                    <Button>▶ Play</Button>
-                    <Button variant="secondary">🎥 Watch</Button>
+                    <Link href="/podcast">
+                      <Button className="w-full">▶ Play</Button>
+                    </Link>
+                    <Link href="/podcast">
+                      <Button className="w-full" variant="secondary">
+                        🎥 Watch
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </Card>
@@ -289,13 +344,21 @@ export default function HomePage() {
             eyebrow="Music"
             title="Official Music — SDQ"
             subtitle="Música original de SMG para deportes y eventos."
-            right={<Button variant="secondary">Explorar música</Button>}
+            right={
+              <Link href="/radio">
+                <Button variant="secondary">Explorar música</Button>
+              </Link>
+            }
           />
 
           <Card className="p-6">
             <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-xl bg-[rgb(var(--smg-soft))]" />
+                <div
+                  className="h-16 w-16 rounded-xl bg-cover bg-center"
+                  style={{ backgroundImage: "url('/media/sdq/cover.jpg')" }}
+                  aria-label="SDQ cover"
+                />
                 <div>
                   <div className="text-sm font-black">SDQ — “Move the Game”</div>
                   <div className="mt-1 text-xs text-black/60">
