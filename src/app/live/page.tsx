@@ -10,42 +10,12 @@ const UPCOMING = {
 };
 
 const REPLAYS = [
-  {
-    title: 'Replay 01 — Road to 2026: Host Cities',
-    meta: 'Highlights • 18 min',
-    image: '/media/live/replays/replay-01.jpg',
-    href: '/live/replay/host-cities',
-  },
-  {
-    title: 'Replay 02 — Music + Sports Culture',
-    meta: 'Interview • 24 min',
-    image: '/media/live/replays/replay-02.jpg',
-    href: '/live/replay/music-sports-culture',
-  },
-  {
-    title: 'Replay 03 — Trivia Night (Top Moments)',
-    meta: 'Live cut • 12 min',
-    image: '/media/live/replays/replay-03.jpg',
-    href: '/live/replay/trivia-night',
-  },
-  {
-    title: 'Replay 04 — SDQ Spotlight: Stadium Vibes',
-    meta: 'Music • 15 min',
-    image: '/media/live/replays/replay-04.jpg',
-    href: '/live/replay/sdq-spotlight',
-  },
-  {
-    title: 'Replay 05 — Match Watch-along (Best takes)',
-    meta: 'Commentary • 22 min',
-    image: '/media/live/replays/replay-05.jpg',
-    href: '/live/replay/watch-along',
-  },
-  {
-    title: 'Replay 06 — Fans & Culture: USA/MEX/CAN',
-    meta: 'Culture • 20 min',
-    image: '/media/live/replays/replay-06.jpg',
-    href: '/live/replay/fans-culture',
-  },
+  { title: 'Replay 01 — Road to 2026: Host Cities', meta: 'Highlights • 18 min', href: '/live/replay/host-cities' },
+  { title: 'Replay 02 — Music + Sports Culture', meta: 'Interview • 24 min', href: '/live/replay/music-sports-culture' },
+  { title: 'Replay 03 — Trivia Night (Top Moments)', meta: 'Live cut • 12 min', href: '/live/replay/trivia-night' },
+  { title: 'Replay 04 — SDQ Spotlight: Stadium Vibes', meta: 'Music • 15 min', href: '/live/replay/host-cities' },
+  { title: 'Replay 05 — Match Watch-along (Best takes)', meta: 'Commentary • 22 min', href: '/live/replay/music-sports-culture' },
+  { title: 'Replay 06 — Fans & Culture: USA/MEX/CAN', meta: 'Culture • 20 min', href: '/live/replay/trivia-night' },
 ];
 
 const CLIPS = [
@@ -157,27 +127,32 @@ export default function LivePage() {
         </div>
 
         {/* REPLAYS */}
-        <div className="mt-10">
+        <div className="mt-10" id="replays">
           <SectionTitle
             eyebrow="Library"
             title="Replays"
             subtitle="Contenido evergreen + highlights (ideal para monetizar y crecer)."
             right={<Button variant="secondary">Ver todo</Button>}
           />
-
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {REPLAYS.map((r) => (
               <Card key={r.title} className="overflow-hidden">
                 <div
                   className="aspect-video bg-cover bg-center"
-                  style={{ backgroundImage: `url('${r.image}')` }}
+                  style={{ backgroundImage: "url('/media/live/replay.jpg')" }}
                 />
                 <div className="p-5">
                   <div className="text-sm font-black">{r.title}</div>
                   <div className="mt-1 text-xs text-black/60">{r.meta}</div>
                   <div className="mt-4 grid grid-cols-2 gap-2">
-                    <Button variant="secondary">▶ Play</Button>
-                    <Button variant="secondary">↗ Share</Button>
+                    <a href={r.href}>
+                      <Button variant="secondary" className="w-full">
+                        ▶ Play
+                      </Button>
+                    </a>
+                    <Button variant="secondary" className="w-full">
+                      ↗ Share
+                    </Button>
                   </div>
                 </div>
               </Card>

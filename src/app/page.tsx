@@ -67,8 +67,8 @@ export default function HomePage() {
 
               <div className="mt-4 space-y-2 text-sm text-white/85">
                 <p>
-                  <span className="font-extrabold">ES:</span> Medio deportivo + música original. Radio
-                  24/7, En Vivo, Podcast y cobertura del camino a la Copa Mundial 2026.
+                  <span className="font-extrabold">ES:</span> Medio deportivo + música original. Radio 24/7,
+                  En Vivo, Podcast y cobertura del camino a la Copa Mundial 2026.
                 </p>
                 <p>
                   <span className="font-extrabold">EN:</span> Sports media + original music. Radio 24/7,
@@ -76,6 +76,7 @@ export default function HomePage() {
                 </p>
               </div>
 
+              {/* BOTONES HERO (con rutas reales) */}
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href="/live">
                   <Button>▶ Watch Live</Button>
@@ -96,13 +97,11 @@ export default function HomePage() {
                   <div className="mt-1 text-2xl font-black">24/7</div>
                   <div className="mt-1 text-xs text-white/70">Sports beats / Música</div>
                 </Card>
-
                 <Card className="border-white/15 bg-white/10 p-4 text-white backdrop-blur">
                   <div className="text-xs font-extrabold text-white/70">Live</div>
                   <div className="mt-1 text-2xl font-black">Weekly</div>
                   <div className="mt-1 text-xs text-white/70">Shows & eventos</div>
                 </Card>
-
                 <Card className="border-white/15 bg-white/10 p-4 text-white backdrop-blur">
                   <div className="text-xs font-extrabold text-white/70">Podcast</div>
                   <div className="mt-1 text-2xl font-black">On-demand</div>
@@ -111,9 +110,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* LIVE CARD (GLASS / SOLO IMAGEN) */}
-            <Card className="overflow-hidden border-white/15 bg-white/10 text-white backdrop-blur">
-              <div className="flex items-center justify-between border-b border-white/15 bg-white/10 px-4 py-3">
+            {/* LIVE CARD (imagen estática estilo “presentación”) */}
+            <Card className="overflow-hidden border-white/10 bg-white/10 backdrop-blur-md">
+              <div className="flex items-center justify-between border-b border-white/10 bg-white/10 px-4 py-3 text-white">
                 <div className="inline-flex items-center gap-2 text-xs font-extrabold">
                   <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
                   LIVE NOW
@@ -122,36 +121,33 @@ export default function HomePage() {
               </div>
 
               <div className="p-4">
-                {/* Imagen de preview (NO video) */}
                 <div
-                  className="aspect-video w-full overflow-hidden rounded-xl border border-white/15 bg-cover bg-center"
+                  className="aspect-video w-full rounded-xl bg-cover bg-center"
                   style={{ backgroundImage: "url('/media/home/live-now.jpg')" }}
                 />
-
                 <div className="mt-4">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
                     ▶ Live Preview
                   </div>
                 </div>
 
-                <div className="mt-4 text-sm font-black">World Cup Talk — Road to 2026</div>
-                <div className="mt-1 text-xs text-white/70">
+                <div className="mt-4 text-sm font-black text-white">World Cup Talk — Road to 2026</div>
+                <div className="mt-1 text-xs text-white/75">
                   Debate + música • invitado semanal • social-first clips
                 </div>
 
                 <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                  <Link href="/live" className="w-full">
+                  <Link href="/live">
                     <Button className="w-full">Watch</Button>
                   </Link>
-
-                  <Link href="/live" className="w-full">
+                  <Link href="/live#replays">
                     <Button className="w-full" variant="secondary">
                       Replays
                     </Button>
                   </Link>
                 </div>
 
-                <Card className="mt-4 border-white/15 bg-white/10 p-3 text-white backdrop-blur">
+                <Card className="mt-4 border-white/10 bg-white/10 p-3 text-white backdrop-blur">
                   <div className="text-xs font-extrabold text-white/70">NEXT LIVE</div>
                   <div className="mt-1 text-sm font-bold">Interview + World Cup Trivia</div>
                   <div className="mt-3 flex justify-end">
@@ -179,7 +175,11 @@ export default function HomePage() {
           <SectionTitle
             title="Highlights"
             subtitle="ESPN-style blocks: trending, clips, trivia and updates."
-            right={<Button variant="secondary">Ver todo</Button>}
+            right={
+              <Link href="/world-cup-2026/news">
+                <Button variant="secondary">Ver todo</Button>
+              </Link>
+            }
           />
 
           <div className="grid gap-4 lg:grid-cols-3">
@@ -213,7 +213,9 @@ export default function HomePage() {
                     Trivia <span className="font-black">Interactivo</span>
                   </div>
                   <div className="ml-auto">
-                    <Button>Ver</Button>
+                    <Link href="/world-cup-2026/host-cities">
+                      <Button>Ver</Button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -221,10 +223,10 @@ export default function HomePage() {
 
             <div className="grid gap-4">
               {[
-                { title: 'News', desc: 'Rumores / fichajes / clasificación', tag: 'World Cup' },
-                { title: 'Trivia', desc: 'Reto del día: ¿qué ciudad sede eres?', tag: 'Engagement' },
-                { title: 'Podcast', desc: 'Invitado del deporte + música SDQ', tag: 'Interview' },
-                { title: 'Radio', desc: 'Especial: “Stadium Vibes”', tag: 'Music' },
+                { title: 'News', desc: 'Rumores / fichajes / clasificación', tag: 'World Cup', href: '/world-cup-2026/news' },
+                { title: 'Trivia', desc: 'Reto del día: ¿qué ciudad sede eres?', tag: 'Engagement', href: '/world-cup-2026/news' },
+                { title: 'Podcast', desc: 'Invitado del deporte + música SDQ', tag: 'Interview', href: '/podcast' },
+                { title: 'Radio', desc: 'Especial: “Stadium Vibes”', tag: 'Music', href: '/radio' },
               ].map((x) => (
                 <Card key={x.title} className="p-5">
                   <div className="flex items-center justify-between gap-3">
@@ -235,128 +237,15 @@ export default function HomePage() {
                   </div>
                   <div className="mt-2 text-sm text-black/60">{x.desc}</div>
                   <div className="mt-4">
-                    <Button variant="secondary" className="w-full">
-                      Abrir
-                    </Button>
+                    <Link href={x.href}>
+                      <Button variant="secondary" className="w-full">
+                        Abrir
+                      </Button>
+                    </Link>
                   </div>
                 </Card>
               ))}
             </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* WORLD CUP CENTER */}
-      <section className="bg-[rgb(var(--smg-soft))]">
-        <Container className="py-10">
-          <SectionTitle
-            eyebrow="World Cup 2026"
-            title="Centro de contenido (70% del feed)"
-            subtitle="Noticias • Ciudades sede • Countdown • Cultura • Playlists • Retos"
-            right={
-              <Link href="/world-cup-2026">
-                <Button>Ir a World Cup</Button>
-              </Link>
-            }
-          />
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {[
-              { title: 'News', desc: 'Actualizaciones rápidas tipo sports desk.' },
-              { title: 'Host Cities', desc: 'Sedes + cultura + música por ciudad.' },
-              { title: 'Countdown', desc: 'Cuenta regresiva + agenda de eventos.' },
-            ].map((c) => (
-              <Card key={c.title} className="p-6">
-                <div className="text-sm font-black">{c.title}</div>
-                <div className="mt-2 text-sm text-black/60">{c.desc}</div>
-                <div className="mt-4">
-                  <Link
-                    href={
-                      c.title === 'News'
-                        ? '/world-cup-2026/news'
-                        : c.title === 'Host Cities'
-                        ? '/world-cup-2026/host-cities'
-                        : '/world-cup-2026/countdown'
-                    }
-                  >
-                    <Button variant="secondary" className="w-full">
-                      Ver
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* PODCAST (3 IMAGENES FIJAS) */}
-      <section className="bg-white">
-        <Container className="py-10">
-          <SectionTitle
-            eyebrow="Podcast"
-            title="Podcast & Interviews"
-            subtitle="Jóvenes talentos + entrevistas a atletas/figuras del deporte."
-            right={<Button variant="secondary">Ver episodios</Button>}
-          />
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {/* Podcast 01 */}
-            <Card className="overflow-hidden">
-              <div className="p-4">
-                <div
-                  className="aspect-[16/10] w-full rounded-xl bg-cover bg-center"
-                  style={{ backgroundImage: "url('/media/home/podcast-01.jpg')" }}
-                />
-                <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-extrabold">
-                  ▶ Preview
-                </div>
-                <div className="mt-4 text-sm font-black">Episode 1: Road to 2026</div>
-                <div className="mt-1 text-xs text-black/60">20–35 min • Clip-ready • Social-first</div>
-                <div className="mt-4 grid gap-2">
-                  <Button>▶ Play</Button>
-                  <Button variant="secondary">🎥 Watch</Button>
-                </div>
-              </div>
-            </Card>
-
-            {/* Podcast 02 */}
-            <Card className="overflow-hidden">
-              <div className="p-4">
-                <div
-                  className="aspect-[16/10] w-full rounded-xl bg-cover bg-center"
-                  style={{ backgroundImage: "url('/media/home/podcast-02.jpg')" }}
-                />
-                <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-extrabold">
-                  ▶ Preview
-                </div>
-                <div className="mt-4 text-sm font-black">Episode 2: Road to 2026</div>
-                <div className="mt-1 text-xs text-black/60">20–35 min • Clip-ready • Social-first</div>
-                <div className="mt-4 grid gap-2">
-                  <Button>▶ Play</Button>
-                  <Button variant="secondary">🎥 Watch</Button>
-                </div>
-              </div>
-            </Card>
-
-            {/* Podcast 03 */}
-            <Card className="overflow-hidden">
-              <div className="p-4">
-                <div
-                  className="aspect-[16/10] w-full rounded-xl bg-cover bg-center"
-                  style={{ backgroundImage: "url('/media/home/podcast-03.jpg')" }}
-                />
-                <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-extrabold">
-                  ▶ Preview
-                </div>
-                <div className="mt-4 text-sm font-black">Episode 3: Road to 2026</div>
-                <div className="mt-1 text-xs text-black/60">20–35 min • Clip-ready • Social-first</div>
-                <div className="mt-4 grid gap-2">
-                  <Button>▶ Play</Button>
-                  <Button variant="secondary">🎥 Watch</Button>
-                </div>
-              </div>
-            </Card>
           </div>
         </Container>
       </section>
@@ -368,7 +257,11 @@ export default function HomePage() {
             eyebrow="Music"
             title="Official Music — SDQ"
             subtitle="Música original de SMG para deportes y eventos."
-            right={<Button variant="secondary">Explorar música</Button>}
+            right={
+              <Link href="/radio">
+                <Button variant="secondary">Explorar música</Button>
+              </Link>
+            }
           />
 
           <Card className="p-6">
@@ -386,8 +279,12 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button>▶ Play</Button>
-                <Button variant="secondary">🎵 Playlist</Button>
+                <Link href="/radio">
+                  <Button>▶ Play</Button>
+                </Link>
+                <Link href="/podcast">
+                  <Button variant="secondary">🎵 Playlist</Button>
+                </Link>
               </div>
             </div>
           </Card>
