@@ -1,147 +1,186 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 
-type Status = 'idle' | 'loading' | 'playing' | 'paused' | 'stopped' | 'error';
+type Status = 'idle' | 'loading' | 'playing' | 'paused' | 'error';
+
+function looksLikePlaylist(url: string) {
+  const u = url.toLowerCase();
+  return u.endsWith('.pls') || u.endsWith('.m3u') || u.endsWith('.m3u8?') || u.includes('.pls?') || u.includes('.m3u?');
+}
+
+/**
+ * No bloqueamos por extensión, porque muchos streams válidos NO terminan en .mp3/.aac
+ * (ej: .../chillits-128-mp3). Intentamos reproducir y si falla mostramos error real.
+ */
+function normalizeUrl(raw: string) {
+  return (raw || '').trim();
+}
 
 export default function AudioPlayer({
-  compact,
+  compact = false,
+  title = 'Radio',
+  defaultUrl = 'https://ice5.somafm.com/chillits-128-mp3',
 }: {
   compact?: boolean;
+  title?: string;
+  defaultUrl?: string;
 }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const streamUrl = useMemo(() => {
-    return process.env.NEXT_PUBLIC_RADIO_STREAM_URL || '';
-  }, []);
-
+  const [url, setUrl] = useState<string>(defaultUrl);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
 
-  const canUse = !!streamUrl;
+  const safeUrl = useMemo(() => normalizeUrl(url), [url]);
 
-  // Toggle Play/Stop (un solo botón)
-  const togglePlayStop = async () => {
-    const el = audioRef.current;
-    if (!el) return;
-
-    // Si está reproduciendo -> STOP (pausa + vuelve al inicio)
-    if (!el.paused && !el.ended) {
-      el.pause();
-      try {
-        el.currentTime = 0;
-      } catch {
-        // algunos streams no permiten currentTime; no pasa nada
-      }
-      setStatus('stopped');
-      setErrorMsg('');
-      return;
-    }
-
-    // Si no está reproduciendo -> PLAY
-    setStatus('loading');
-    setErrorMsg('');
-
-    try {
-      // Forzamos carga antes de play (ayuda a algunos streams)
-      el.load();
-
-      const p = el.play();
-      if (p && typeof p.then === 'function') {
-        await p;
-      }
-      // Ojo: el estado real lo consolidan los eventos "playing"/"pause"
-      // pero dejamos un status provisional si el navegador tarda:
-      setStatus('playing');
-      setErrorMsg('');
-    } catch (err: any) {
-      // Esto pasa por autoplay bloqueado o stream incompatible
-      setStatus('error');
-      setErrorMsg(
-        'No se pudo reproducir el stream. Verifica que sea un enlace directo (.mp3/.aac).'
-      );
-    }
-  };
-
+  // Crear el elemento <audio> una sola vez
   useEffect(() => {
-    const el = audioRef.current;
-    if (!el) return;
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.preload = 'none';
+    }
+
+    const a = audioRef.current;
 
     const onPlaying = () => {
       setStatus('playing');
       setErrorMsg('');
     };
-
     const onPause = () => {
-      // Si el usuario pausó/stop
-      if (status !== 'error') setStatus('paused');
+      // pause también se dispara cuando hacemos stop manual, validamos estado actual
+      setStatus((prev) => (prev === 'playing' || prev === 'loading' ? 'paused' : prev));
     };
-
-    const onWaiting = () => {
-      setStatus('loading');
-    };
-
+    const onWaiting = () => setStatus('loading');
     const onError = () => {
-      // A veces algunos streams disparan error al inicio pero luego “enganchan”.
-      // No vamos a “clavar” error si luego llega playing.
       setStatus('error');
-      setErrorMsg(
-        'No se pudo reproducir el stream. Verifica que sea un enlace directo (.mp3/.aac).'
-      );
+      setErrorMsg('No se pudo reproducir el stream. Prueba otro enlace o verifica que sea un stream directo.');
     };
 
-    el.addEventListener('playing', onPlaying);
-    el.addEventListener('pause', onPause);
-    el.addEventListener('waiting', onWaiting);
-    el.addEventListener('error', onError);
+    a.addEventListener('playing', onPlaying);
+    a.addEventListener('pause', onPause);
+    a.addEventListener('waiting', onWaiting);
+    a.addEventListener('error', onError);
 
     return () => {
-      el.removeEventListener('playing', onPlaying);
-      el.removeEventListener('pause', onPause);
-      el.removeEventListener('waiting', onWaiting);
-      el.removeEventListener('error', onError);
+      a.removeEventListener('playing', onPlaying);
+      a.removeEventListener('pause', onPause);
+      a.removeEventListener('waiting', onWaiting);
+      a.removeEventListener('error', onError);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const isPlaying = (() => {
-    const el = audioRef.current;
-    return el ? !el.paused && !el.ended : status === 'playing';
-  })();
+  const isPlaying = status === 'playing';
+  const isLoading = status === 'loading';
 
-  const label = !canUse
-    ? 'Configurar'
-    : isPlaying
-    ? '⏹ Stop'
-    : status === 'loading'
-    ? '⏳ Cargando...'
-    : '▶ Play';
+  async function handlePlay() {
+    const a = audioRef.current;
+    if (!a) return;
+
+    const target = safeUrl;
+
+    if (!target) {
+      setStatus('error');
+      setErrorMsg('Debes colocar un enlace de streaming válido.');
+      return;
+    }
+
+    // Aviso útil (no bloquea): PLS/M3U son listas; algunos navegadores no las reproducen directo.
+    if (looksLikePlaylist(target)) {
+      setStatus('error');
+      setErrorMsg(
+        'Ese enlace parece una lista (.pls/.m3u). Usa un enlace directo del servidor (como ice*.somafm.com/...).',
+      );
+      return;
+    }
+
+    try {
+      setStatus('loading');
+      setErrorMsg('');
+
+      // Importante: asignar src en el click (gesto del usuario)
+      if (a.src !== target) a.src = target;
+
+      a.load();
+      const p = a.play();
+
+      // En algunos navegadores, play() devuelve Promise
+      if (p && typeof (p as Promise<void>).then === 'function') {
+        await p;
+      }
+
+      // Si no dispara "playing" rápido, igual dejamos loading y el evento lo actualizará
+    } catch (err: any) {
+      setStatus('error');
+
+      const name = err?.name || '';
+      if (name === 'NotAllowedError') {
+        setErrorMsg(
+          'El navegador bloqueó la reproducción automática. Da click otra vez en Play (o habilita audio para este sitio).',
+        );
+      } else if (name === 'NotSupportedError') {
+        setErrorMsg('El stream no es compatible con tu navegador. Prueba otro enlace (MP3/AAC).');
+      } else {
+        setErrorMsg(
+          'No se pudo reproducir el stream. Verifica que sea un stream directo (no playlist) y que esté activo.',
+        );
+      }
+    }
+  }
+
+  function handleStop() {
+    const a = audioRef.current;
+    if (!a) return;
+
+    a.pause();
+    a.currentTime = 0;
+
+    // Opcional: liberar src para “resetear” totalmente
+    // a.src = '';
+    setStatus('paused');
+    setErrorMsg('');
+  }
+
+  function handleToggle() {
+    if (isPlaying || isLoading) handleStop();
+    else handlePlay();
+  }
 
   return (
-    <div className={compact ? 'flex items-center justify-between gap-3' : 'space-y-3'}>
-      {/* Audio element */}
-      <audio ref={audioRef} src={streamUrl} preload="none" />
+    <Card className={compact ? 'p-4' : 'p-6'}>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0">
+          <div className="text-sm font-black">{title}</div>
+          <div className="mt-1 text-xs text-black/60 break-all">{safeUrl}</div>
+          <div className="mt-1 text-xs font-semibold text-black/60">Estado: {status}</div>
 
-      <div className={compact ? 'min-w-0' : ''}>
-        <div className="text-sm font-black">Radio</div>
-        <div className="mt-1 text-xs text-black/60 break-all">
-          {canUse ? streamUrl : 'Configura NEXT_PUBLIC_RADIO_STREAM_URL en .env.local'}
+          {/* ✅ Error SOLO cuando status === 'error' */}
+          {status === 'error' && errorMsg ? (
+            <div className="mt-2 text-xs font-semibold text-red-600">{errorMsg}</div>
+          ) : null}
         </div>
-        <div className="mt-1 text-xs text-black/60">Estado: {status}</div>
-        {errorMsg ? (
-          <div className="mt-1 text-xs font-semibold text-red-600">{errorMsg}</div>
-        ) : null}
-      </div>
 
-      <div className={compact ? 'shrink-0' : ''}>
-        <Button
-          onClick={togglePlayStop}
-          disabled={!canUse || status === 'loading'}
-        >
-          {label}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={handleToggle} variant={isPlaying || isLoading ? 'secondary' : 'primary'}>
+            {isPlaying || isLoading ? '⏹ Stop' : '▶ Play'}
+          </Button>
+
+          {/* Campo para cambiar URL rápido (opcional) */}
+          <Button
+            variant="secondary"
+            onClick={() => {
+              // ejemplo rápido para probar el link que tú pasaste
+              setUrl('https://ice5.somafm.com/chillits-128-mp3');
+              setStatus('idle');
+              setErrorMsg('');
+            }}
+          >
+            Probar SomaFM
+          </Button>
+        </div>
       </div>
-    </div>
+    </Card>
   );
 }

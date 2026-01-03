@@ -1,35 +1,32 @@
 import Card from '@/components/ui/Card';
-import { LIVE_YOUTUBE_ID } from '@/lib/stream';
 
 export default function LiveEmbed({
   title = 'SMG Live',
+  // Pon aquí un video DEMO que siempre funcione (luego lo cambias por el real)
+  youtubeId = 'dQw4w9WgXcQ',
 }: {
   title?: string;
+  youtubeId?: string;
 }) {
-  const id = LIVE_YOUTUBE_ID;
-
-  if (!id) {
-    return (
-      <Card className="p-6">
-        <div className="text-sm font-black">{title}</div>
-        <div className="mt-2 text-sm text-black/60">
-          Configura NEXT_PUBLIC_LIVE_YOUTUBE_ID en .env.local
-        </div>
-      </Card>
-    );
-  }
+  const src = `https://www.youtube.com/embed/${youtubeId}?rel=0&modestbranding=1`;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-black/10 bg-white">
-      <div className="aspect-video w-full">
-        <iframe
-          className="h-full w-full"
-          src={`https://www.youtube.com/embed/${id}?autoplay=0&mute=1&playsinline=1`}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        />
+    <Card className="overflow-hidden">
+      <div className="p-4">
+        <div className="text-sm font-black">{title}</div>
+        <div className="mt-3 aspect-video w-full overflow-hidden rounded-xl border border-black/10 bg-black">
+          <iframe
+            className="h-full w-full"
+            src={src}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+        <div className="mt-2 text-xs text-black/60">
+          *Demo YouTube embed. Luego conectamos el ID real desde .env.local.
+        </div>
       </div>
-    </div>
+    </Card>
   );
 }
