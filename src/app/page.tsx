@@ -3,8 +3,8 @@ import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import AudioPlayer from '@/components/ui/AudioPlayer';
+import LiveEmbed from '@/components/ui/LiveEmbed';
 import Link from 'next/link';
-import Image from 'next/image';
 
 function SectionTitle({
   eyebrow,
@@ -81,9 +81,11 @@ export default function HomePage() {
                 <Link href="/live">
                   <Button>▶ Watch Live</Button>
                 </Link>
+
                 <Link href="/radio">
                   <Button variant="secondary">🎧 Listen Radio</Button>
                 </Link>
+
                 <Link href="/world-cup-2026">
                   <Button variant="secondary">🏆 World Cup 2026</Button>
                 </Link>
@@ -95,11 +97,13 @@ export default function HomePage() {
                   <div className="mt-1 text-2xl font-black">24/7</div>
                   <div className="mt-1 text-xs text-white/70">Sports beats / Música</div>
                 </Card>
+
                 <Card className="border-white/15 bg-white/10 p-4 text-white backdrop-blur">
                   <div className="text-xs font-extrabold text-white/70">Live</div>
                   <div className="mt-1 text-2xl font-black">Weekly</div>
                   <div className="mt-1 text-xs text-white/70">Shows & eventos</div>
                 </Card>
+
                 <Card className="border-white/15 bg-white/10 p-4 text-white backdrop-blur">
                   <div className="text-xs font-extrabold text-white/70">Podcast</div>
                   <div className="mt-1 text-2xl font-black">On-demand</div>
@@ -108,30 +112,30 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* LIVE CARD */}
-            <Card className="overflow-hidden bg-white/85 backdrop-blur">
-              <div className="flex items-center justify-between border-b border-black/10 bg-white/80 px-4 py-3">
+            {/* LIVE CARD (GLASS / TRANSPARENTE) */}
+            <Card className="overflow-hidden border-white/15 bg-white/10 text-white backdrop-blur">
+              <div className="flex items-center justify-between border-b border-white/15 bg-white/10 px-4 py-3">
                 <div className="inline-flex items-center gap-2 text-xs font-extrabold">
                   <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
                   LIVE NOW
                 </div>
-                <div className="text-xs font-semibold text-black/60">SMG Studio</div>
+                <div className="text-xs font-semibold text-white/70">SMG Studio</div>
               </div>
 
               <div className="p-4">
-                <div className="aspect-video w-full overflow-hidden rounded-xl bg-[rgb(var(--smg-soft))]">
-                  <Image
-                    src="/media/home/live-now.jpg"
-                    alt="SMG Live Now"
-                    width={1280}
-                    height={720}
-                    className="h-full w-full object-cover"
-                    priority={false}
-                  />
+                {/* Embed / preview */}
+                <div className="overflow-hidden rounded-xl border border-white/15 bg-black/20">
+                  <LiveEmbed title="SMG Live — Road to 2026" />
+                </div>
+
+                <div className="mt-4">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
+                    ▶ Live Preview
+                  </div>
                 </div>
 
                 <div className="mt-4 text-sm font-black">World Cup Talk — Road to 2026</div>
-                <div className="mt-1 text-xs text-black/60">
+                <div className="mt-1 text-xs text-white/70">
                   Debate + música • invitado semanal • social-first clips
                 </div>
 
@@ -139,10 +143,21 @@ export default function HomePage() {
                   <Link href="/live" className="w-full">
                     <Button className="w-full">Watch</Button>
                   </Link>
-                  <Button className="w-full" variant="secondary">
-                    Replays
-                  </Button>
+
+                  <Link href="/live" className="w-full">
+                    <Button className="w-full" variant="secondary">
+                      Replays
+                    </Button>
+                  </Link>
                 </div>
+
+                <Card className="mt-4 border-white/15 bg-white/10 p-3 text-white backdrop-blur">
+                  <div className="text-xs font-extrabold text-white/70">NEXT LIVE</div>
+                  <div className="mt-1 text-sm font-bold">Interview + World Cup Trivia</div>
+                  <div className="mt-3 flex justify-end">
+                    <Button variant="secondary">🔔 Remind</Button>
+                  </div>
+                </Card>
               </div>
             </Card>
           </div>
@@ -163,7 +178,7 @@ export default function HomePage() {
         <Container className="py-10">
           <SectionTitle
             title="Highlights"
-            subtitle="Blocks: trending, clips, trivia and updates."
+            subtitle="ESPN-style blocks: trending, clips, trivia and updates."
             right={<Button variant="secondary">Ver todo</Button>}
           />
 
@@ -175,21 +190,17 @@ export default function HomePage() {
                   <div className="text-xs font-semibold text-black/50">World Cup • Cultura • Música</div>
                 </div>
 
-                <div className="mt-3 aspect-[16/9] w-full overflow-hidden rounded-xl bg-[rgb(var(--smg-soft))]">
-                  <Image
-                    src="/media/home/trending.jpg"
-                    alt="Trending"
-                    width={1600}
-                    height={900}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+                {/* Imagen trending */}
+                <div
+                  className="mt-3 aspect-[16/9] w-full rounded-xl bg-cover bg-center"
+                  style={{ backgroundImage: "url('/media/home/trending.jpg')" }}
+                />
 
                 <div className="mt-4 text-lg font-black">
                   “Camino a 2026”: Host cities + cultura + playlist oficial
                 </div>
                 <div className="mt-1 text-sm text-black/60">
-                  Formato rápido para redes: 30–60s clips + post informativo.
+                  Un formato rápido para redes: 30–60s clips + post informativo.
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -203,9 +214,7 @@ export default function HomePage() {
                     Trivia <span className="font-black">Interactivo</span>
                   </div>
                   <div className="ml-auto">
-                    <Link href="/world-cup-2026">
-                      <Button>Ver</Button>
-                    </Link>
+                    <Button>Ver</Button>
                   </div>
                 </div>
               </div>
@@ -289,38 +298,24 @@ export default function HomePage() {
             eyebrow="Podcast"
             title="Podcast & Interviews"
             subtitle="Jóvenes talentos + entrevistas a atletas/figuras del deporte."
-            right={
-              <Link href="/podcast">
-                <Button variant="secondary">Ver episodios</Button>
-              </Link>
-            }
+            right={<Button variant="secondary">Ver episodios</Button>}
           />
 
           <div className="grid gap-4 md:grid-cols-3">
-            {[
-              { n: 1, img: '/media/home/podcast/podcast-01.jpg' },
-              { n: 2, img: '/media/home/podcast/podcast-02.jpg' },
-              { n: 3, img: '/media/home/podcast/podcast-03.jpg' },
-            ].map((x) => (
-              <Card key={x.n} className="overflow-hidden">
+            {[1, 2, 3].map((n) => (
+              <Card key={n} className="overflow-hidden">
                 <div className="p-4">
-                  <div className="aspect-[16/10] w-full overflow-hidden rounded-xl bg-[rgb(var(--smg-soft))]">
-                    <Image
-                      src={x.img}
-                      alt={`Podcast ${x.n}`}
-                      width={1600}
-                      height={1000}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-
+                  <div
+                    className="aspect-[16/10] w-full rounded-xl bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url('/media/home/podcast-0${n}.jpg')`,
+                    }}
+                  />
                   <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-extrabold">
                     ▶ Preview
                   </div>
-                  <div className="mt-4 text-sm font-black">Episode {x.n}: Road to 2026</div>
-                  <div className="mt-1 text-xs text-black/60">
-                    20–35 min • Clip-ready • Social-first
-                  </div>
+                  <div className="mt-4 text-sm font-black">Episode {n}: Road to 2026</div>
+                  <div className="mt-1 text-xs text-black/60">20–35 min • Clip-ready • Social-first</div>
                   <div className="mt-4 grid gap-2">
                     <Button>▶ Play</Button>
                     <Button variant="secondary">🎥 Watch</Button>
@@ -345,15 +340,10 @@ export default function HomePage() {
           <Card className="p-6">
             <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
-                <div className="h-16 w-16 overflow-hidden rounded-xl bg-[rgb(var(--smg-soft))]">
-                  <Image
-                    src="/media/home/sdq.jpg"
-                    alt="SDQ"
-                    width={256}
-                    height={256}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+                <div
+                  className="h-16 w-16 rounded-xl bg-cover bg-center"
+                  style={{ backgroundImage: "url('/media/home/sdq.jpg')" }}
+                />
                 <div>
                   <div className="text-sm font-black">SDQ — “Move the Game”</div>
                   <div className="mt-1 text-xs text-black/60">
