@@ -1,56 +1,11 @@
+// src/app/page.tsx
+import Image from 'next/image';
+import Link from 'next/link';
+
 import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Link from 'next/link';
-
-const TOP_NEWS = [
-  {
-    title: 'Rumores y fichajes del día',
-    meta: '5 min • Actualizado',
-    href: '/world-cup-2026/news/rumores-fichajes',
-    tag: 'NEWS',
-  },
-  {
-    title: 'Clasificación y escenarios',
-    meta: 'Análisis • 8 min',
-    href: '/world-cup-2026/news/clasificacion-escenarios',
-    tag: 'ANÁLISIS',
-  },
-  {
-    title: 'Top clips para redes',
-    meta: '30–60s • Viral',
-    href: '/world-cup-2026/news/top-clips-redes',
-    tag: 'CLIPS',
-  },
-];
-
-const CITY_SPOTLIGHT = {
-  title: 'Host City Spotlight',
-  city: 'Miami',
-  note: 'Hispanic hub • Música • Fan culture',
-  href: '/world-cup-2026/host-cities/miami',
-};
-
-const QUICK_ACTIONS = [
-  {
-    title: 'Ver News',
-    desc: 'Actualizaciones rápidas listas para contenido social.',
-    href: '/world-cup-2026/news',
-    cta: 'Abrir',
-  },
-  {
-    title: 'Host Cities',
-    desc: 'Sedes + cultura + música por ciudad (base del contenido).',
-    href: '/world-cup-2026/host-cities',
-    cta: 'Explorar',
-  },
-  {
-    title: 'Countdown',
-    desc: 'Cuenta regresiva + agenda editorial SMG.',
-    href: '/world-cup-2026/countdown',
-    cta: 'Ver',
-  },
-];
+import AudioPlayer from '@/components/ui/AudioPlayer';
 
 function SectionTitle({
   eyebrow,
@@ -79,92 +34,88 @@ function SectionTitle({
   );
 }
 
-export default function WorldCupHubPage() {
+export default function HomePage() {
   return (
     <div className="bg-white">
-      {/* HERO */}
-      <section className="border-b border-black/10 bg-[rgb(var(--smg-soft))]">
-        <Container className="py-12">
-          <div className="grid gap-6 lg:grid-cols-2 lg:items-center">
+      {/* ================= HERO ================= */}
+      <section className="relative overflow-hidden border-b border-black/10">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/media/home/hero.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+
+        <Container className="relative py-12 md:py-16">
+          <div className="grid items-center gap-8 md:grid-cols-2">
+            {/* TEXT */}
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-xs font-extrabold">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
                 <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
-                Road to FIFA World Cup 2026
+                Road to World Cup 2026
               </div>
 
-              <h1 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
-                World Cup 2026 Hub
+              <h1 className="mt-6 text-4xl font-black tracking-tight text-white md:text-6xl">
+                Music that moves <br className="hidden md:block" /> the world of sports
               </h1>
 
-              <p className="mt-3 max-w-xl text-sm text-black/70">
-                Cobertura SMG: noticias rápidas, cultura por sede, playlists SDQ y contenido social-first
-                (Reels/TikTok/Shorts). 70% del feed enfocado al Mundial.
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Link href="/world-cup-2026/news">
-                  <Button>📰 News</Button>
-                </Link>
-                <Link href="/world-cup-2026/host-cities">
-                  <Button variant="secondary">🏟 Host Cities</Button>
-                </Link>
-                <Link href="/world-cup-2026/countdown">
-                  <Button variant="secondary">⏳ Countdown</Button>
-                </Link>
+              <div className="mt-4 space-y-2 text-sm text-white/85">
+                <p>
+                  <span className="font-extrabold">ES:</span> Medio deportivo + música original. Radio
+                  24/7, En Vivo, Podcast y cobertura Mundial 2026.
+                </p>
+                <p>
+                  <span className="font-extrabold">EN:</span> Sports media + original music. Radio 24/7,
+                  Live, Podcast and Road to World Cup 2026.
+                </p>
               </div>
 
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                <Card className="p-4">
-                  <div className="text-xs font-extrabold text-black/50">Formato</div>
-                  <div className="mt-1 text-lg font-black">Social-first</div>
-                  <div className="mt-1 text-xs text-black/60">30–60s clips</div>
-                </Card>
-                <Card className="p-4">
-                  <div className="text-xs font-extrabold text-black/50">Tono</div>
-                  <div className="mt-1 text-lg font-black">Internacional</div>
-                  <div className="mt-1 text-xs text-black/60">ES + EN</div>
-                </Card>
-                <Card className="p-4">
-                  <div className="text-xs font-extrabold text-black/50">Música</div>
-                  <div className="mt-1 text-lg font-black">SDQ</div>
-                  <div className="mt-1 text-xs text-black/60">Trends + hooks</div>
-                </Card>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/live">
+                  <Button>▶ Watch Live</Button>
+                </Link>
+                <Link href="/radio">
+                  <Button variant="secondary">🎧 Listen Radio</Button>
+                </Link>
+                <Link href="/world-cup-2026">
+                  <Button variant="secondary">🏆 World Cup 2026</Button>
+                </Link>
               </div>
             </div>
 
-            {/* FEATURED PANEL */}
-            <Card className="overflow-hidden">
-              <div className="flex items-center justify-between border-b border-black/10 bg-white px-4 py-3">
-                <div className="text-xs font-extrabold text-black/70">FEATURED</div>
-                <div className="text-xs font-semibold text-black/60">SMG Editorial</div>
+            {/* ========== LIVE NOW (TRANSPARENTE) ========== */}
+            <Card className="overflow-hidden !border-white/15 !bg-white/10 text-white backdrop-blur">
+              <div className="flex items-center justify-between border-b border-white/15 px-4 py-3">
+                <div className="inline-flex items-center gap-2 text-xs font-extrabold">
+                  <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
+                  LIVE NOW
+                </div>
+                <div className="text-xs font-semibold text-white/70">SMG Studio</div>
               </div>
 
-              <div className="p-5">
-                <div className="aspect-[16/9] w-full rounded-xl bg-gradient-to-br from-black/10 to-black/0" />
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-                  <span className="rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-bold text-black/70">
-                    Spotlight
-                  </span>
-                  <span className="text-xs font-semibold text-black/60">
-                    USA • Mexico • Canada
-                  </span>
+              <div className="p-4">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl">
+                  <Image
+                    src="/media/home/live-now.jpg"
+                    alt="SMG Live"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
                 </div>
-                <div className="mt-3 text-lg font-black">
-                  “Camino a 2026”: cultura + música por sede
-                </div>
-                <div className="mt-1 text-sm text-black/60">
-                  Un enfoque SMG: no solo fútbol — también cultura, música y tendencias.
+
+                <div className="mt-4 text-sm font-black">World Cup Talk — Road to 2026</div>
+                <div className="mt-1 text-xs text-white/70">
+                  Debate + música • invitado semanal
                 </div>
 
                 <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                  <Link href="/world-cup-2026/host-cities">
-                    <Button className="w-full">Ver sedes</Button>
+                  <Link href="/live">
+                    <Button className="w-full">Watch</Button>
                   </Link>
-                  <Link href="/world-cup-2026/news">
-                    <Button className="w-full" variant="secondary">
-                      Ver news
-                    </Button>
-                  </Link>
+                  <Button className="w-full" variant="secondary">
+                    Replays
+                  </Button>
                 </div>
               </div>
             </Card>
@@ -172,137 +123,43 @@ export default function WorldCupHubPage() {
         </Container>
       </section>
 
-      {/* QUICK ACTIONS */}
+      {/* ================= RADIO STRIP ================= */}
+      <section className="border-b border-black/10 bg-white">
+        <Container className="py-8">
+          <Card className="p-5">
+            <AudioPlayer compact />
+          </Card>
+        </Container>
+      </section>
+
+      {/* ================= PODCAST ================= */}
       <section className="bg-white">
         <Container className="py-10">
           <SectionTitle
-            eyebrow="Quick Nav"
-            title="Accesos rápidos"
-            subtitle="Entradas claras para navegación real y contenido útil."
+            eyebrow="Podcast"
+            title="Podcast & Interviews"
+            subtitle="Jóvenes talentos + entrevistas a atletas y figuras."
+            right={<Link href="/podcast"><Button variant="secondary">Ver todo</Button></Link>}
           />
+
           <div className="grid gap-4 md:grid-cols-3">
-            {QUICK_ACTIONS.map((a) => (
-              <Card key={a.title} className="p-6">
-                <div className="text-sm font-black">{a.title}</div>
-                <div className="mt-2 text-sm text-black/60">{a.desc}</div>
-                <div className="mt-4">
-                  <Link href={a.href}>
-                    <Button variant="secondary" className="w-full">
-                      {a.cta}
-                    </Button>
-                  </Link>
+            {[1, 2, 3].map((n) => (
+              <Card key={n} className="overflow-hidden">
+                <div className="relative aspect-[16/10]">
+                  <Image
+                    src={`/media/podcast/podcast-0${n}.jpg`}
+                    alt={`Podcast ${n}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <div className="text-sm font-black">Episode {n}: Road to 2026</div>
+                  <div className="mt-1 text-xs text-black/60">20–35 min</div>
                 </div>
               </Card>
             ))}
           </div>
-        </Container>
-      </section>
-
-      {/* TOP NEWS + CITY SPOTLIGHT */}
-      <section className="bg-[rgb(var(--smg-soft))]">
-        <Container className="py-10">
-          <div className="grid gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <SectionTitle
-                eyebrow="Trending"
-                title="Top News (listo para redes)"
-                subtitle="Títulos cortos, ganchos rápidos y salida a clip/post."
-                right={
-                  <Link href="/world-cup-2026/news">
-                    <Button variant="secondary">Ver todo</Button>
-                  </Link>
-                }
-              />
-              <div className="grid gap-4 md:grid-cols-3">
-                {TOP_NEWS.map((n) => (
-                  <Card key={n.title} className="p-6">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="text-xs font-extrabold text-black/50">{n.tag}</div>
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-black/70">
-                        2026
-                      </span>
-                    </div>
-                    <div className="mt-3 text-sm font-black">{n.title}</div>
-                    <div className="mt-2 text-xs text-black/60">{n.meta}</div>
-                    <div className="mt-4 grid gap-2">
-                      <Link href={n.href}>
-                        <Button variant="secondary" className="w-full">
-                          Abrir
-                        </Button>
-                      </Link>
-                      <Button variant="secondary" className="w-full">
-                        🎬 Hacer clip
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <SectionTitle
-                eyebrow="Spotlight"
-                title={CITY_SPOTLIGHT.title}
-                subtitle="Sede destacada de la semana."
-              />
-
-              <Card className="p-6">
-                <div className="text-xs font-extrabold text-black/50">CITY</div>
-                <div className="mt-2 text-lg font-black">{CITY_SPOTLIGHT.city}</div>
-                <div className="mt-2 text-sm text-black/60">{CITY_SPOTLIGHT.note}</div>
-
-                <div className="mt-4 aspect-[16/10] w-full rounded-xl bg-gradient-to-br from-black/10 to-black/0" />
-
-                <div className="mt-4 grid gap-2">
-                  <Link href={CITY_SPOTLIGHT.href}>
-                    <Button className="w-full">Ver contenido</Button>
-                  </Link>
-                  <Link href="/world-cup-2026/countdown">
-                    <Button variant="secondary" className="w-full">
-                      ⏳ Ver countdown
-                    </Button>
-                  </Link>
-                </div>
-
-                <div className="mt-4 rounded-xl border border-black/10 bg-white p-3">
-                  <div className="text-xs font-extrabold text-black/50">SMG IDEA</div>
-                  <div className="mt-1 text-sm font-black">
-                    “City + Hook SDQ”
-                  </div>
-                  <div className="mt-1 text-xs text-black/60">
-                    Clip 20–30s con un dato cultural + hook musical SDQ.
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-white">
-        <Container className="py-10">
-          <Card className="p-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <div className="text-sm font-black">Siguiente paso</div>
-                <div className="mt-1 text-sm text-black/60">
-                  Luego conectamos el HUB con datos reales (CMS) y automatizamos la creación de posts.
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Link href="/world-cup-2026/news">
-                  <Button variant="secondary">News</Button>
-                </Link>
-                <Link href="/world-cup-2026/host-cities">
-                  <Button variant="secondary">Host Cities</Button>
-                </Link>
-                <Link href="/world-cup-2026/countdown">
-                  <Button variant="secondary">Countdown</Button>
-                </Link>
-              </div>
-            </div>
-          </Card>
         </Container>
       </section>
     </div>
