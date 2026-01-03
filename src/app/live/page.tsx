@@ -2,7 +2,6 @@ import Container from '@/components/layout/Container';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import LiveEmbed from '@/components/ui/LiveEmbed';
-import Link from 'next/link';
 
 const UPCOMING = {
   title: 'Interview + World Cup Trivia',
@@ -10,17 +9,43 @@ const UPCOMING = {
   notes: '30–45 min • Clips para redes • Invitado semanal',
 };
 
-const REPLAYS: Array<{ title: string; meta: string; slug: string }> = [
-  { title: 'Replay 01 — Road to 2026: Host Cities', meta: 'Highlights • 18 min', slug: 'host-cities' },
+const REPLAYS = [
+  {
+    title: 'Replay 01 — Road to 2026: Host Cities',
+    meta: 'Highlights • 18 min',
+    image: '/media/live/replays/replay-01.jpg',
+    href: '/live/replay/host-cities',
+  },
   {
     title: 'Replay 02 — Music + Sports Culture',
     meta: 'Interview • 24 min',
-    slug: 'music-sports-culture',
+    image: '/media/live/replays/replay-02.jpg',
+    href: '/live/replay/music-sports-culture',
   },
-  { title: 'Replay 03 — Trivia Night (Top Moments)', meta: 'Live cut • 12 min', slug: 'trivia-night' },
-  { title: 'Replay 04 — SDQ Spotlight: Stadium Vibes', meta: 'Music • 15 min', slug: 'sdq-stadium-vibes' },
-  { title: 'Replay 05 — Match Watch-along (Best takes)', meta: 'Commentary • 22 min', slug: 'match-watch-along' },
-  { title: 'Replay 06 — Fans & Culture: USA/MEX/CAN', meta: 'Culture • 20 min', slug: 'fans-culture' },
+  {
+    title: 'Replay 03 — Trivia Night (Top Moments)',
+    meta: 'Live cut • 12 min',
+    image: '/media/live/replays/replay-03.jpg',
+    href: '/live/replay/trivia-night',
+  },
+  {
+    title: 'Replay 04 — SDQ Spotlight: Stadium Vibes',
+    meta: 'Music • 15 min',
+    image: '/media/live/replays/replay-04.jpg',
+    href: '/live/replay/sdq-spotlight',
+  },
+  {
+    title: 'Replay 05 — Match Watch-along (Best takes)',
+    meta: 'Commentary • 22 min',
+    image: '/media/live/replays/replay-05.jpg',
+    href: '/live/replay/watch-along',
+  },
+  {
+    title: 'Replay 06 — Fans & Culture: USA/MEX/CAN',
+    meta: 'Culture • 20 min',
+    image: '/media/live/replays/replay-06.jpg',
+    href: '/live/replay/fans-culture',
+  },
 ];
 
 const CLIPS = [
@@ -143,16 +168,15 @@ export default function LivePage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {REPLAYS.map((r) => (
               <Card key={r.title} className="overflow-hidden">
-                <div className="aspect-video bg-gradient-to-br from-black/10 to-black/0" />
+                <div
+                  className="aspect-video bg-cover bg-center"
+                  style={{ backgroundImage: `url('${r.image}')` }}
+                />
                 <div className="p-5">
                   <div className="text-sm font-black">{r.title}</div>
                   <div className="mt-1 text-xs text-black/60">{r.meta}</div>
                   <div className="mt-4 grid grid-cols-2 gap-2">
-                    <Link href={`/live/replay/${r.slug}`} className="block">
-                      <Button variant="secondary" className="w-full">
-                        ▶ Play
-                      </Button>
-                    </Link>
+                    <Button variant="secondary">▶ Play</Button>
                     <Button variant="secondary">↗ Share</Button>
                   </div>
                 </div>
