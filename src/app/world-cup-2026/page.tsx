@@ -48,7 +48,7 @@ export default function WorldCupHubPage() {
               </div>
             </div>
 
-            {/* RIGHT (LIVE NOW con la MISMA imagen tipo presentación) */}
+            {/* RIGHT (LIVE NOW con imagen de presentación) */}
             <Card className="overflow-hidden border-white/15 bg-white/10 text-white backdrop-blur">
               <div className="flex items-center justify-between border-b border-white/15 bg-white/10 px-4 py-3">
                 <div className="inline-flex items-center gap-2 text-xs font-extrabold">
@@ -59,7 +59,6 @@ export default function WorldCupHubPage() {
               </div>
 
               <div className="p-4">
-                {/* Imagen (no video) para presentación */}
                 <div
                   className="aspect-video w-full rounded-xl bg-cover bg-center"
                   style={{ backgroundImage: "url('/media/world-cup-2026/live-now.jpg')" }}
@@ -86,7 +85,7 @@ export default function WorldCupHubPage() {
         </Container>
       </section>
 
-      {/* HUB CONTENT (cards + featured como lo tenías) */}
+      {/* HUB CONTENT (cards + featured) */}
       <section className="bg-white">
         <Container className="py-10">
           <div className="grid gap-4 md:grid-cols-3">
@@ -154,6 +153,65 @@ export default function WorldCupHubPage() {
                   Ver Countdown
                 </Button>
               </Link>
+            </div>
+          </div>
+
+          {/* PODCAST (esta es la sección que faltaba en /world-cup-2026) */}
+          <div className="mt-12 border-t border-black/10 pt-10">
+            <div className="mb-5 flex items-end justify-between gap-4">
+              <div>
+                <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">
+                  Podcast
+                </div>
+                <h2 className="mt-1 text-2xl font-black tracking-tight">Podcast & Interviews</h2>
+                <p className="mt-1 text-sm text-black/60">
+                  Jóvenes talentos + entrevistas a atletas/figuras del deporte.
+                </p>
+              </div>
+              <Link href="/podcast">
+                <Button variant="secondary">Ver episodios</Button>
+              </Link>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  n: 1,
+                  img: '/media/home/podcast-01.jpg',
+                  title: 'Episode 1: Road to 2026',
+                  meta: '20–35 min • Clip-ready • Social-first',
+                },
+                {
+                  n: 2,
+                  img: '/media/home/podcast-02.jpg',
+                  title: 'Episode 2: Host Cities Spotlight',
+                  meta: '20–35 min • Cultura + música',
+                },
+                {
+                  n: 3,
+                  img: '/media/home/podcast-03.jpg',
+                  title: 'Episode 3: Trivia Night',
+                  meta: '20–35 min • Fans + debate',
+                },
+              ].map((ep) => (
+                <Card key={ep.n} className="overflow-hidden">
+                  <div
+                    className="aspect-[16/10] w-full bg-cover bg-center"
+                    style={{ backgroundImage: `url('${ep.img}')` }}
+                  />
+                  <div className="p-4">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-extrabold">
+                      ▶ Preview
+                    </div>
+                    <div className="mt-4 text-sm font-black">{ep.title}</div>
+                    <div className="mt-1 text-xs text-black/60">{ep.meta}</div>
+                    <div className="mt-4 grid gap-2">
+                      <Button variant="secondary">▶ Play</Button>
+                      <Button variant="secondary">🎥 Watch</Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
             </div>
           </div>
         </Container>
