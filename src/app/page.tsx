@@ -81,9 +81,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* RIGHT - LIVE NOW (TRANSPARENTE) */}
+            {/* RIGHT - LIVE NOW (MÁS GRANDE + TRANSPARENTE) */}
             <div className="md:justify-self-end">
-              <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur">
+              <div className="w-full md:w-[560px] lg:w-[620px] overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur">
                 <div className="flex items-center justify-between px-4 py-3">
                   <div className="inline-flex items-center gap-2 text-xs font-extrabold text-white/90">
                     <span className="inline-flex h-2 w-2 rounded-full bg-[rgb(var(--smg-red))]" />
@@ -93,10 +93,12 @@ export default function HomePage() {
                 </div>
 
                 <div className="px-4 pb-4">
+                  {/* Thumbnail (más grande) */}
                   <div
-                    className="aspect-video w-full rounded-xl bg-cover bg-center"
+                    className="aspect-[16/9] w-full rounded-xl bg-cover bg-center"
                     style={{ backgroundImage: "url('/media/home/live-now.jpg')" }}
                   />
+
                   <div className="mt-4">
                     <div className="text-sm font-extrabold text-white">
                       World Cup Talk — Road to 2026
