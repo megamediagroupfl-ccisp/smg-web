@@ -1,48 +1,75 @@
+import Link from 'next/link';
 import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 
 const FEATURED = {
   title: 'Episode 1: Road to 2026',
-  meta: 'Guest • 28 min • World Cup Special',
-  image: '/media/podcast/episodes/ep-01.jpg',
+  slug: 'episode-1-road-to-2026',
+  meta: '28 min • Interview • World Cup',
+  excerpt:
+    'Un episodio para presentar el concepto SMG: deporte + música + cultura. Ideal para clips de 30–60s.',
+  image: '/media/podcast/featured.jpg',
 };
 
 const EPISODES = [
-  { n: 1, title: 'Road to 2026 — Host Cities', meta: 'Interview • 22–35 min', image: '/media/podcast/episodes/ep-01.jpg' },
-  { n: 2, title: 'Music that Moves Sports', meta: 'Culture • 18–28 min', image: '/media/podcast/episodes/ep-02.jpg' },
-  { n: 3, title: 'Trivia Night (Fans Edition)', meta: 'Fun • 15–22 min', image: '/media/podcast/episodes/ep-03.jpg' },
-  { n: 4, title: 'Legends & Future Stars', meta: 'Interview • 20–35 min', image: '/media/podcast/episodes/ep-04.jpg' },
-  { n: 5, title: 'USA/MEX/CAN — Cultural Impact', meta: 'Culture • 18–30 min', image: '/media/podcast/episodes/ep-05.jpg' },
-  { n: 6, title: 'SDQ Spotlight — Stadium Vibes', meta: 'Music • 15–25 min', image: '/media/podcast/episodes/ep-06.jpg' },
+  {
+    title: 'Episode 1: Road to 2026',
+    slug: 'episode-1-road-to-2026',
+    meta: '28 min • Interview',
+    tags: ['World Cup', 'SMG Studio'],
+    image: '/media/podcast/ep-01.jpg',
+  },
+  {
+    title: 'Episode 2: Host Cities Culture',
+    slug: 'episode-2-host-cities-culture',
+    meta: '22 min • Culture',
+    tags: ['Host Cities', 'Playlist'],
+    image: '/media/podcast/ep-02.jpg',
+  },
+  {
+    title: 'Episode 3: Stadium Vibes (SDQ)',
+    slug: 'episode-3-stadium-vibes-sdq',
+    meta: '18 min • Music',
+    tags: ['SDQ', 'Beats'],
+    image: '/media/podcast/ep-03.jpg',
+  },
+  {
+    title: 'Episode 4: Trivia Night Best Takes',
+    slug: 'episode-4-trivia-night-best-takes',
+    meta: '16 min • Trivia',
+    tags: ['Engagement', 'Clips'],
+    image: '/media/podcast/ep-04.jpg',
+  },
+  {
+    title: 'Episode 5: Rivalries & Fans',
+    slug: 'episode-5-rivalries-and-fans',
+    meta: '24 min • Commentary',
+    tags: ['Culture', 'Fans'],
+    image: '/media/podcast/ep-05.jpg',
+  },
+  {
+    title: 'Episode 6: Weekly Roundup',
+    slug: 'episode-6-weekly-roundup',
+    meta: '20 min • News',
+    tags: ['News', 'Recap'],
+    image: '/media/podcast/ep-06.jpg',
+  },
+  {
+    title: 'Episode 7: Miami Hub',
+    slug: 'episode-7-miami-hub',
+    meta: '19 min • Cities',
+    tags: ['Miami', 'Experience'],
+    image: '/media/podcast/ep-07.jpg',
+  },
+  {
+    title: 'Episode 8: Road to 2026 — Clips Strategy',
+    slug: 'episode-8-clips-strategy',
+    meta: '21 min • Social-first',
+    tags: ['Reels', 'Shorts'],
+    image: '/media/podcast/ep-08.jpg',
+  },
 ];
-
-function SectionTitle({
-  eyebrow,
-  title,
-  subtitle,
-  right,
-}: {
-  eyebrow?: string;
-  title: string;
-  subtitle?: string;
-  right?: React.ReactNode;
-}) {
-  return (
-    <div className="mb-5 flex items-end justify-between gap-4">
-      <div>
-        {eyebrow ? (
-          <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">
-            {eyebrow}
-          </div>
-        ) : null}
-        <h2 className="mt-1 text-2xl font-black tracking-tight">{title}</h2>
-        {subtitle ? <p className="mt-1 text-sm text-black/60">{subtitle}</p> : null}
-      </div>
-      {right ? <div className="shrink-0">{right}</div> : null}
-    </div>
-  );
-}
 
 export default function PodcastPage() {
   return (
@@ -51,17 +78,15 @@ export default function PodcastPage() {
         <Container className="py-10">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">
-                SMG Podcast
-              </div>
+              <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">Podcast</div>
               <h1 className="mt-2 text-3xl font-black tracking-tight">Podcast & Interviews</h1>
               <p className="mt-2 text-sm text-black/70">
-                Jóvenes talentos + entrevistas a atletas/figuras. 70% contenido rumbo a World Cup 2026.
+                Entrevistas, cultura, música y el camino a la Copa Mundial 2026 (demo listo para presentar).
               </p>
             </div>
             <div className="flex gap-2">
-              <Button variant="secondary">🎙 Crear episodio</Button>
-              <Button>▶ Reproducir</Button>
+              <Button variant="secondary">Crear episodio</Button>
+              <Button>Crear clip</Button>
             </div>
           </div>
         </Container>
@@ -69,59 +94,80 @@ export default function PodcastPage() {
 
       <Container className="py-10">
         {/* FEATURED */}
-        <Card className="overflow-hidden">
-          <div
-            className="aspect-[16/6] bg-cover bg-center"
-            style={{ backgroundImage: `url('${FEATURED.image}')` }}
-          />
-          <div className="p-6">
-            <div className="text-xs font-extrabold text-black/60">FEATURED EPISODE</div>
-            <div className="mt-1 text-lg font-black">{FEATURED.title}</div>
-            <div className="mt-1 text-sm text-black/60">{FEATURED.meta}</div>
+        <div className="mb-10">
+          <div className="mb-4 text-xs font-extrabold uppercase tracking-wider text-black/50">Featured Episode</div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Button>▶ Play</Button>
-              <Button variant="secondary">🎥 Watch</Button>
-              <Button variant="secondary">↗ Share</Button>
-            </div>
-          </div>
-        </Card>
-
-        {/* EPISODES GRID */}
-        <div className="mt-10">
-          <SectionTitle
-            eyebrow="Library"
-            title="Episodes"
-            subtitle="Episodios listos para recortes (clips) y distribución en redes."
-            right={<Button variant="secondary">Ver todo</Button>}
-          />
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {EPISODES.map((ep) => (
-              <Card key={ep.n} className="overflow-hidden">
-                <div
-                  className="aspect-video bg-cover bg-center"
-                  style={{ backgroundImage: `url('${ep.image}')` }}
+          <Card className="overflow-hidden">
+            <div className="grid gap-0 lg:grid-cols-2">
+              <div className="aspect-video overflow-hidden bg-black/5 lg:aspect-auto">
+                <img
+                  src={FEATURED.image}
+                  alt={FEATURED.title}
+                  className="h-full w-full object-cover"
                 />
-                <div className="p-5">
-                  <div className="text-xs font-extrabold text-black/50">EP {String(ep.n).padStart(2, '0')}</div>
-                  <div className="mt-1 text-sm font-black">{ep.title}</div>
-                  <div className="mt-1 text-xs text-black/60">{ep.meta}</div>
+              </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-2">
-                    <Button variant="secondary">▶ Play</Button>
-                    <Button variant="secondary">🎥 Watch</Button>
-                  </div>
+              <div className="p-6">
+                <div className="text-lg font-black">{FEATURED.title}</div>
+                <div className="mt-1 text-sm text-black/60">{FEATURED.meta}</div>
+                <p className="mt-4 text-sm text-black/70">{FEATURED.excerpt}</p>
 
-                  <div className="mt-2">
-                    <Button variant="secondary" className="w-full">
-                      ✂️ Crear clip
-                    </Button>
-                  </div>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <Link href={`/podcast/${FEATURED.slug}`}>
+                    <Button>▶ Abrir</Button>
+                  </Link>
+                  <Button variant="secondary">🎧 Play</Button>
+                  <Button variant="secondary">🎥 Watch</Button>
                 </div>
-              </Card>
-            ))}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* GRID */}
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <div>
+            <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">Library</div>
+            <h2 className="mt-1 text-2xl font-black tracking-tight">Episodes</h2>
+            <p className="mt-1 text-sm text-black/60">Contenido evergreen + ideal para clips.</p>
           </div>
+          <Button variant="secondary">Ver todos</Button>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {EPISODES.map((ep) => (
+            <Card key={ep.slug} className="overflow-hidden">
+              <div className="aspect-video overflow-hidden bg-black/5">
+                <img src={ep.image} alt={ep.title} className="h-full w-full object-cover" />
+              </div>
+              <div className="p-4">
+                <div className="text-sm font-black">{ep.title}</div>
+                <div className="mt-1 text-xs text-black/60">{ep.meta}</div>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {ep.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-bold text-black/70"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <Link href={`/podcast/${ep.slug}`}>
+                    <Button variant="secondary" className="w-full">
+                      Abrir
+                    </Button>
+                  </Link>
+                  <Button variant="secondary" className="w-full">
+                    ↗ Share
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
       </Container>
     </div>
