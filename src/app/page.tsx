@@ -1,4 +1,5 @@
 // src/app/page.tsx
+import HomePodcastInterviews from '@/components/home/HomePodcastInterviews';
 import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
