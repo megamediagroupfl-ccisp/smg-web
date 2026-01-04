@@ -2,6 +2,7 @@ import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
+import HomePodcastInterviews from '@/components/home/HomePodcastInterviews';
 
 const EPISODES = [
   { title: 'Episode 1: Road to 2026', img: '/media/podcast/ep-01.jpg', meta: '15–20 min • Show' },
