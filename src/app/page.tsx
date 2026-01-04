@@ -19,11 +19,18 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
 
         <Container className="relative py-12 md:py-16">
-          {/* IMPORTANTE:
-             - En desktop dejamos 2 columnas
-             - El Live Now NO debe invadir el título (controlado por max-width y alineación)
+          {/* ✅ Grid con columnas controladas:
+              - Col 1: texto (1fr)
+              - Col 2: Live Now (ancho máximo real)
+              Esto evita que la tarjeta se “monte” sobre el título.
           */}
-          <div className="grid items-start gap-8 md:grid-cols-2">
+          <div
+            className="
+              grid items-start gap-10
+              md:grid-cols-[minmax(0,1fr)_minmax(0,520px)]
+              lg:grid-cols-[minmax(0,1fr)_minmax(0,580px)]
+            "
+          >
             {/* LEFT: texto */}
             <div className="min-w-0">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
@@ -86,15 +93,14 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* RIGHT: LIVE NOW (controlado) */}
-            <div className="md:justify-self-end">
+            {/* RIGHT: LIVE NOW */}
+            <div className="justify-self-end w-full">
               <Card
                 className="
                   overflow-hidden
                   border-white/20 bg-white/10 text-white backdrop-blur
                   w-full
-                  md:w-[520px] lg:w-[580px]
-                  max-w-full
+                  max-w-[520px] lg:max-w-[580px]
                 "
               >
                 <div className="flex items-center justify-between border-b border-white/15 bg-white/10 px-4 py-3">
@@ -105,7 +111,7 @@ export default function HomePage() {
                   <div className="text-xs font-bold text-white/75">SMG Studio</div>
                 </div>
 
-                {/* Imagen placeholder (presentación) */}
+                {/* Imagen placeholder */}
                 <div className="p-4">
                   <div
                     className="aspect-video w-full rounded-xl border border-white/15 bg-cover bg-center"
@@ -137,7 +143,7 @@ export default function HomePage() {
 
       {/* BODY */}
       <Container className="py-12">
-        {/* TRENDING + SDQ (demo visual) */}
+        {/* TRENDING + SDQ */}
         <div className="grid gap-6 lg:grid-cols-3">
           <Card className="overflow-hidden lg:col-span-2">
             <div className="p-6">
@@ -173,7 +179,7 @@ export default function HomePage() {
           </Card>
         </div>
 
-        {/* PODCAST & INTERVIEWS (3 imágenes) */}
+        {/* PODCAST & INTERVIEWS */}
         <div className="mt-10">
           <div className="mb-5">
             <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">Podcast</div>
@@ -222,4 +228,3 @@ export default function HomePage() {
     </div>
   );
 }
-
