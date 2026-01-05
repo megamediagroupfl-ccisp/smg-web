@@ -1,55 +1,128 @@
+// src/app/podcast/[slug]/page.tsx
 import Link from 'next/link';
 import Container from '@/components/layout/Container';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 
-const EPISODES: Record<
-  string,
-  { title: string; meta: string; description: string; image: string; tags: string[] }
-> = {
-  'episode-1-road-to-2026': {
-    title: 'Episode 1: Road to 2026',
-    meta: '28 min • Interview • World Cup',
-    description:
-      'Presentación del concepto SMG: deporte + música + cultura. Estructura pensada para clips de 30–60 segundos y contenido evergreen.',
-    image: '/media/podcast/ep-01.jpg',
-    tags: ['World Cup', 'SMG Studio', 'Interview'],
-  },
-  'episode-2-host-cities-culture': {
-    title: 'Episode 2: Host Cities Culture',
-    meta: '22 min • Culture • Playlist',
-    description:
-      'Ciudades sede, fan zones, cultura y música por ciudad. Base para contenido social y cápsulas informativas.',
-    image: '/media/podcast/ep-02.jpg',
-    tags: ['Host Cities', 'Culture', 'Playlist'],
-  },
+type Episode = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  duration: string;
+  tags: string[];
+  cover: string; // /public path
+  description: string;
+  youtube?: string; // pendiente de confirmar
+  audio?: string; // pendiente de confirmar
 };
 
-const MORE = [
-  { title: 'Episode 3: Stadium Vibes (SDQ)', slug: 'episode-3-stadium-vibes-sdq', image: '/media/podcast/ep-03.jpg', meta: '18 min • Music' },
-  { title: 'Episode 4: Trivia Night Best Takes', slug: 'episode-4-trivia-night-best-takes', image: '/media/podcast/ep-04.jpg', meta: '16 min • Trivia' },
-  { title: 'Episode 6: Weekly Roundup', slug: 'episode-6-weekly-roundup', image: '/media/podcast/ep-06.jpg', meta: '20 min • News' },
+const EPISODES: Episode[] = [
+  {
+    slug: 'episode-01',
+    title: 'Episode 1: Road to 2026',
+    subtitle: 'World Cup kickoff + visión editorial SMG',
+    duration: '28 min',
+    tags: ['World Cup', 'Editorial', 'Sports Culture'],
+    cover: '/media/podcast/ep-01.jpg',
+    description:
+      'Un episodio introductorio para presentar el concepto SMG: contenido deportivo + música original, formato social-first y cobertura rumbo al Mundial 2026.',
+  },
+  {
+    slug: 'episode-02',
+    title: 'Episode 2: Host Cities Spotlight',
+    subtitle: 'Ciudades sede + cultura + fan zones',
+    duration: '24 min',
+    tags: ['Host Cities', 'Culture', 'Travel'],
+    cover: '/media/podcast/ep-02.jpg',
+    description:
+      'Recorrido por el concepto de ciudades sede y cómo convertir cada ciudad en una línea de contenido: clips, trivia, playlists, activaciones y entrevistas.',
+  },
+  {
+    slug: 'episode-03',
+    title: 'Episode 3: Music x Sports',
+    subtitle: 'La fórmula de SDQ y el sonido del estadio',
+    duration: '20 min',
+    tags: ['SDQ', 'Music', 'Brand'],
+    cover: '/media/podcast/ep-03.jpg',
+    description:
+      'Cómo usar música original para identidad, contenidos cortos, trends y segmentos de radio. Ideal para reforzar el “look & feel” internacional.',
+  },
+  {
+    slug: 'episode-04',
+    title: 'Episode 4: Weekly Live Format',
+    subtitle: 'Estructura de shows en vivo (clips + engagement)',
+    duration: '22 min',
+    tags: ['Live', 'Format', 'Social'],
+    cover: '/media/podcast/ep-04.jpg',
+    description:
+      'Diseño de guion y dinámica para Live semanal: secciones cortas, momentos virales, preguntas del público y calendario de temas rumbo a 2026.',
+  },
+  {
+    slug: 'episode-05',
+    title: 'Episode 5: Trivia Night',
+    subtitle: 'Interacción, retos y gamificación ligera',
+    duration: '18 min',
+    tags: ['Trivia', 'Engagement', 'Community'],
+    cover: '/media/podcast/ep-05.jpg',
+    description:
+      'Episodio para presentar el concepto de trivia semanal, retos por ciudades sede y dinámicas fáciles de mantener mientras el equipo crece.',
+  },
+  {
+    slug: 'episode-06',
+    title: 'Episode 6: Highlights & Replays',
+    subtitle: 'Biblioteca evergreen + monetización',
+    duration: '26 min',
+    tags: ['Replays', 'Library', 'Growth'],
+    cover: '/media/podcast/ep-06.jpg',
+    description:
+      'Cómo estructurar replays y highlights para que sirvan de motor de crecimiento: SEO, clips, distribución y consistencia editorial.',
+  },
+  {
+    slug: 'episode-07',
+    title: 'Episode 7: News Desk',
+    subtitle: 'Noticias rápidas listas para social',
+    duration: '19 min',
+    tags: ['News', 'Short-form', 'Workflow'],
+    cover: '/media/podcast/ep-07.jpg',
+    description:
+      'Proceso de contenido tipo desk: titulares, verificación rápida, copy breve, plantillas visuales y publicación constante sin parecer “ESPN 100%”.',
+  },
+  {
+    slug: 'episode-08',
+    title: 'Episode 8: International Rollout',
+    subtitle: 'Bilingüe, marca, y expansión',
+    duration: '30 min',
+    tags: ['Bilingual', 'International', 'Brand'],
+    cover: '/media/podcast/ep-08.jpg',
+    description:
+      'Estrategia para mantener foco hispano sin perder el mercado inglés: estructura editorial, UX, y consistencia en web + futura app.',
+  },
 ];
 
-export default function PodcastEpisodePage({ params }: { params: { slug: string } }) {
-  const data = EPISODES[params.slug];
+export default async function PodcastEpisodePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const ep = EPISODES.find((e) => e.slug === slug);
 
-  if (!data) {
+  if (!ep) {
     return (
       <div className="bg-white">
-        <Container className="py-12">
-          <Card className="p-6">
-            <div className="text-lg font-black">Episode not found</div>
-            <div className="mt-2 text-sm text-black/60">
-              Este episodio no existe en el demo todavía.
-            </div>
-            <div className="mt-4">
+        <section className="border-b border-black/10 bg-[rgb(var(--smg-soft))]">
+          <Container className="py-10">
+            <h1 className="text-3xl font-black tracking-tight">Episode not found</h1>
+            <p className="mt-2 text-sm text-black/70">
+              Este episodio no existe o aún no está publicado.
+            </p>
+            <div className="mt-5">
               <Link href="/podcast">
                 <Button variant="secondary">← Volver a Podcast</Button>
               </Link>
             </div>
-          </Card>
-        </Container>
+          </Container>
+        </section>
       </div>
     );
   }
@@ -58,92 +131,69 @@ export default function PodcastEpisodePage({ params }: { params: { slug: string 
     <div className="bg-white">
       <section className="border-b border-black/10 bg-[rgb(var(--smg-soft))]">
         <Container className="py-10">
-          <div className="flex items-end justify-between gap-4">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">Podcast</div>
-              <h1 className="mt-2 text-3xl font-black tracking-tight">{data.title}</h1>
-              <p className="mt-2 text-sm text-black/70">{data.meta}</p>
-            </div>
-            <Link href="/podcast">
-              <Button variant="secondary">← Volver</Button>
-            </Link>
-          </div>
-        </Container>
-      </section>
+              <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">
+                SMG Podcast
+              </div>
+              <h1 className="mt-2 text-3xl font-black tracking-tight">{ep.title}</h1>
+              <p className="mt-2 text-sm text-black/70">{ep.subtitle}</p>
+              <div className="mt-3 text-xs text-black/60">Duración: {ep.duration}</div>
 
-      <Container className="py-10">
-        <div className="grid gap-6 lg:grid-cols-3">
-          <Card className="overflow-hidden lg:col-span-2">
-            <div className="aspect-video overflow-hidden bg-black/5">
-              <img src={data.image} alt={data.title} className="h-full w-full object-cover" />
-            </div>
-            <div className="p-6">
-              <div className="flex flex-wrap gap-2">
-                {data.tags.map((t) => (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {ep.tags.map((t) => (
                   <span
                     key={t}
-                    className="rounded-full bg-[rgb(var(--smg-soft))] px-3 py-1 text-xs font-bold text-black/70"
+                    className="rounded-full bg-white px-3 py-1 text-xs font-bold text-black/70"
                   >
                     {t}
                   </span>
                 ))}
               </div>
 
-              <p className="mt-4 text-sm text-black/70">{data.description}</p>
-
               <div className="mt-6 flex flex-wrap gap-2">
-                <Button>🎧 Play</Button>
-                <Button variant="secondary">🎥 Watch</Button>
+                <Button>▶ Play (demo)</Button>
+                <Button variant="secondary">🎥 Watch (pendiente)</Button>
                 <Button variant="secondary">↗ Share</Button>
+                <Link href="/podcast">
+                  <Button variant="secondary">← Back</Button>
+                </Link>
               </div>
             </div>
+
+            <Card className="overflow-hidden md:w-[420px]">
+              <div
+                className="aspect-[16/10] bg-cover bg-center"
+                style={{ backgroundImage: `url('${ep.cover}')` }}
+              />
+              <div className="p-5">
+                <div className="text-xs font-extrabold text-black/50">DESCRIPTION</div>
+                <div className="mt-2 text-sm text-black/70">{ep.description}</div>
+              </div>
+            </Card>
+          </div>
+        </Container>
+      </section>
+
+      <Container className="py-10">
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card className="p-6">
+            <div className="text-sm font-black">Notas del episodio</div>
+            <ul className="mt-3 space-y-2 text-sm text-black/70">
+              <li>• Formato social-first (clips 30–60s)</li>
+              <li>• Línea editorial rumbo a 2026</li>
+              <li>• Integración con Live + Radio (pendiente de confirmar)</li>
+            </ul>
           </Card>
 
           <Card className="p-6">
-            <div className="text-sm font-black">Episode actions</div>
-            <div className="mt-2 text-sm text-black/60">
-              En la versión real: links a YouTube/Spotify/Apple Podcasts + tracking.
-            </div>
+            <div className="text-sm font-black">Acciones</div>
             <div className="mt-4 grid gap-2">
-              <Button variant="secondary">Crear clip</Button>
-              <Button variant="secondary">Generar post</Button>
-              <Button variant="secondary">Guardar en favoritos</Button>
+              <Button variant="secondary">📌 Guardar</Button>
+              <Button variant="secondary">🗓 Agendar segmento</Button>
+              <Button variant="secondary">🧩 Crear clip</Button>
             </div>
           </Card>
-        </div>
-
-        <div className="mt-10">
-          <div className="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <div className="text-xs font-extrabold uppercase tracking-wider text-black/50">More</div>
-              <h2 className="mt-1 text-2xl font-black tracking-tight">More episodes</h2>
-              <p className="mt-1 text-sm text-black/60">Sugeridos para mantener retención.</p>
-            </div>
-            <Link href="/podcast">
-              <Button variant="secondary">Ver todos</Button>
-            </Link>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {MORE.map((m) => (
-              <Card key={m.slug} className="overflow-hidden">
-                <div className="aspect-video overflow-hidden bg-black/5">
-                  <img src={m.image} alt={m.title} className="h-full w-full object-cover" />
-                </div>
-                <div className="p-5">
-                  <div className="text-sm font-black">{m.title}</div>
-                  <div className="mt-1 text-xs text-black/60">{m.meta}</div>
-                  <div className="mt-4">
-                    <Link href={`/podcast/${m.slug}`}>
-                      <Button variant="secondary" className="w-full">
-                        Abrir
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
         </div>
       </Container>
     </div>
