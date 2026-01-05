@@ -1,6 +1,6 @@
 'use client';
 
-// src/components/ui/AudioPlayer.tsx
+// D:\sport-music-group\smg-web\src\components\ui\AudioPlayer.tsx
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -26,38 +26,45 @@ export default function AudioPlayer({
 }: {
   compact?: boolean;
   label?: string;
-  streamUrl?: string; // si no lo pasas, queda en demo
+  streamUrl?: string; // si no lo pasas, usa ENV o demo
 }) {
-  // NOTA: Tu streaming real se conecta luego. Por ahora dejamos un valor por defecto.
-  const url = useMemo(
-    () => streamUrl ?? 'https://ice5.somafm.com/chillits-128-mp3',
-    [streamUrl],
-  );
-
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [nowPlaying, setNowPlaying] = useState<NowPlaying | null>(null);
 
-  const showStop = status === 'playing' || status === 'loading';
+  // Endpoint configurable (para luego cambiar a Inovanex sin tocar UI)
+  const nowPlayingUrl =
+    (process.env.NEXT_PUBLIC_NOWPLAYING_URL as string) || '/api/now-playing';
+
+  // Stream configurable (para luego cambiar a Inovanex sin tocar UI)
+  const url = useMemo(() => {
+    const envUrl = process.env.NEXT_PUBLIC_RADIO_STREAM_URL as string | undefined;
+    return streamUrl ?? envUrl ?? 'https://ice5.somafm.com/chillits-128-mp3';
+  }, [streamUrl]);
+
+  const isBusy = status === 'loading';
+  const isPlaying = status === 'playing';
+  const canStop = status === 'playing' || status === 'loading';
 
   async function fetchNowPlaying() {
     try {
-      const res = await fetch('/api/now-playing', { cache: 'no-store' });
+      const res = await fetch(nowPlayingUrl, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = (await res.json()) as NowPlaying;
       setNowPlaying(data);
     } catch {
-      // No rompemos la UI si falla el demo endpoint
+      // No rompemos la UI si falla el endpoint
       setNowPlaying(null);
     }
   }
 
   useEffect(() => {
     fetchNowPlaying();
-    const t = setInterval(fetchNowPlaying, 10000); // cada 10s
+    const t = setInterval(fetchNowPlaying, 10000);
     return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handlePlay() {
@@ -67,22 +74,23 @@ export default function AudioPlayer({
     setErrorMsg('');
     setStatus('loading');
 
+    // Important: set src only when playing to avoid sticky errors
     el.src = url;
     el.load();
 
     el.play()
-      .then(() => {
-        setStatus('playing');
-      })
+      .then(() => setStatus('playing'))
       .catch((err: any) => {
-        setStatus('error');
         const name = err?.name ? String(err.name) : 'Error';
+
         const message =
           name === 'NotAllowedError'
             ? 'El navegador bloqueó la reproducción (autoplay). Da click nuevamente en Play.'
             : name === 'NotSupportedError'
-              ? 'No se pudo reproducir el stream. Verifica el formato (.mp3/.aac).'
+              ? 'No se pudo reproducir el stream. Verifica el formato (.mp3/.aac/.m3u8) y que sea un enlace directo.'
               : 'No se pudo reproducir el stream. Verifica el enlace.';
+
+        setStatus('error');
         setErrorMsg(`${message} (${name})`);
       });
   }
@@ -91,22 +99,38 @@ export default function AudioPlayer({
     const el = audioRef.current;
     if (!el) return;
 
-    el.pause();
-    el.currentTime = 0;
+    try {
+      el.pause();
+      el.currentTime = 0;
+      // Limpia src para evitar que el navegador “recuerde” un estado malo
+      el.removeAttribute('src');
+      el.load();
+    } catch {
+      // no-op
+    }
     setStatus('paused');
   }
 
+  function handleToggle() {
+    if (canStop) handleStop();
+    else handlePlay();
+  }
+
   return (
-    <Card className={cn('p-5', compact ? 'p-4' : 'p-6')}>
+    <Card className={cn(compact ? 'p-4' : 'p-6')}>
       <audio
         ref={audioRef}
         onPlaying={() => setStatus('playing')}
         onPause={() => setStatus((s) => (s === 'loading' ? s : 'paused'))}
         onError={() => {
-          setStatus('error');
-          if (!errorMsg) {
-            setErrorMsg('No se pudo cargar el stream. Prueba otro enlace.');
-          }
+          // Solo marcamos error si el usuario intentó reproducir (loading/playing)
+          setStatus((prev) => {
+            if (prev === 'loading' || prev === 'playing') return 'error';
+            return prev;
+          });
+          setErrorMsg((prev) =>
+            prev || 'No se pudo cargar el stream. Prueba otro enlace.'
+          );
         }}
       />
 
@@ -114,7 +138,6 @@ export default function AudioPlayer({
         {/* LEFT */}
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 overflow-hidden rounded-xl bg-[rgb(var(--smg-soft))]">
-            {/* cover demo */}
             {nowPlaying?.cover ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -122,7 +145,6 @@ export default function AudioPlayer({
                 alt="cover"
                 className="h-full w-full object-cover"
                 onError={(e) => {
-                  // si no existe la imagen, lo dejamos limpio
                   (e.currentTarget as HTMLImageElement).style.display = 'none';
                 }}
               />
@@ -130,7 +152,10 @@ export default function AudioPlayer({
           </div>
 
           <div>
-            <div className="text-sm font-black">{label} — {nowPlaying?.station ?? 'SMG Radio'}</div>
+            <div className="text-sm font-black">
+              {label} — {nowPlaying?.station ?? 'SMG Radio'}
+            </div>
+
             <div className="mt-1 text-xs text-black/60">
               {nowPlaying ? (
                 <>
@@ -150,7 +175,7 @@ export default function AudioPlayer({
               Estado: <span className="font-bold">{status}</span>
             </div>
 
-            {/* MOSTRAR ERROR SOLO SI status === 'error' */}
+            {/* ERROR SOLO SI status === 'error' */}
             {status === 'error' && errorMsg ? (
               <div className="mt-2 text-xs font-semibold text-red-600">{errorMsg}</div>
             ) : null}
@@ -159,16 +184,11 @@ export default function AudioPlayer({
 
         {/* RIGHT */}
         <div className="flex flex-wrap gap-2">
-          <Button onClick={handlePlay}>▶ Play</Button>
-          {showStop ? (
-            <Button variant="secondary" onClick={handleStop}>
-              ⏹ Stop
-            </Button>
-          ) : (
-            <Button variant="secondary" onClick={handleStop}>
-              ⏹ Stop
-            </Button>
-          )}
+          {/* Toggle real */}
+          <Button onClick={handleToggle} disabled={isBusy}>
+            {canStop ? '⏹ Stop' : '▶ Play'}
+          </Button>
+
           <Button variant="secondary" onClick={fetchNowPlaying}>
             ↻ Refresh
           </Button>

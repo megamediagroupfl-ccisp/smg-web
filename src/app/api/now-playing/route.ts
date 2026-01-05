@@ -1,65 +1,62 @@
-// src/app/api/now-playing/route.ts
+// D:\sport-music-group\smg-web\src\app\api\now-playing\route.ts
 import { NextResponse } from 'next/server';
 
 type NowPlaying = {
   station: string;
-  live: boolean;
-  title: string;
+  isLive: boolean;
   artist: string;
-  show: string;
-  cover: string; // URL pública en /public
-  startedAt: string; // ISO
-  listeners: number;
+  title: string;
+  cover?: string; // URL o ruta /media/...
+  listeners?: number;
+  updatedAt: string; // ISO
 };
 
-const TRACKS: Array<Omit<NowPlaying, 'startedAt' | 'listeners'>> = [
+// Demo rotativo para que “se sienta real”
+const DEMO: Omit<NowPlaying, 'updatedAt'>[] = [
   {
     station: 'SMG Radio',
-    live: true,
-    title: 'Stadium Vibes (Demo)',
+    isLive: true,
     artist: 'SDQ',
-    show: 'Morning Sports Mix',
-    cover: '/media/radio/covers/cover-01.jpg',
+    title: 'Move the Game (Stadium Vibes)',
+    cover: '/media/radio/covers/sdq-move-the-game.jpg',
+    listeners: 128,
   },
   {
     station: 'SMG Radio',
-    live: true,
-    title: 'Road to 2026 (Demo)',
+    isLive: true,
     artist: 'SMG Editorial',
-    show: 'World Cup Midday',
-    cover: '/media/radio/covers/cover-02.jpg',
+    title: 'Road to 2026 — Host Cities Mix',
+    cover: '/media/radio/covers/road-to-2026.jpg',
+    listeners: 214,
   },
   {
     station: 'SMG Radio',
-    live: true,
-    title: 'Halftime Energy (Demo)',
-    artist: 'SDQ',
-    show: 'SDQ Spotlight',
-    cover: '/media/radio/covers/cover-03.jpg',
+    isLive: true,
+    artist: 'World Cup Culture',
+    title: 'Miami Fan Zone — Night Session',
+    cover: '/media/radio/covers/miami-fanzone.jpg',
+    listeners: 301,
   },
   {
     station: 'SMG Radio',
-    live: true,
-    title: 'Night Stadium (Demo)',
-    artist: 'SMG Radio',
-    show: 'Night Stadium Vibes',
-    cover: '/media/radio/covers/cover-04.jpg',
+    isLive: true,
+    artist: 'Stadium Classics',
+    title: 'Anthem Set — Warm Up',
+    cover: '/media/radio/covers/stadium-classics.jpg',
+    listeners: 187,
   },
 ];
 
-export function GET() {
-  const idx = Math.floor(Date.now() / 15000) % TRACKS.length; // rota cada 15s
-  const base = TRACKS[idx];
-
+export async function GET() {
+  const pick = DEMO[Math.floor(Date.now() / 10000) % DEMO.length]; // cambia cada 10s
   const payload: NowPlaying = {
-    ...base,
-    startedAt: new Date().toISOString(),
-    listeners: 120 + (Math.floor(Date.now() / 1000) % 35),
+    ...pick,
+    updatedAt: new Date().toISOString(),
   };
 
   return NextResponse.json(payload, {
     headers: {
-      'Cache-Control': 'no-store, max-age=0',
+      'Cache-Control': 'no-store',
     },
   });
 }
