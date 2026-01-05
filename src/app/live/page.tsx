@@ -15,37 +15,37 @@ const REPLAYS = [
     title: 'Replay 01 — Road to 2026: Host Cities',
     meta: 'Highlights • 18 min',
     href: '/live/replay/host-cities',
-    img: '/media/live/replays/replay-01.jpg',
+    image: '/media/live/replays/replay-01.jpg',
   },
   {
     title: 'Replay 02 — Music + Sports Culture',
     meta: 'Interview • 24 min',
     href: '/live/replay/music-sports-culture',
-    img: '/media/live/replays/replay-02.jpg',
+    image: '/media/live/replays/replay-02.jpg',
   },
   {
     title: 'Replay 03 — Trivia Night (Top Moments)',
     meta: 'Live cut • 12 min',
     href: '/live/replay/trivia-night',
-    img: '/media/live/replays/replay-03.jpg',
+    image: '/media/live/replays/replay-03.jpg',
   },
   {
     title: 'Replay 04 — SDQ Spotlight: Stadium Vibes',
     meta: 'Music • 15 min',
     href: '/live/replay/sdq-stadium-vibes',
-    img: '/media/live/replays/replay-04.jpg',
+    image: '/media/live/replays/replay-04.jpg',
   },
   {
     title: 'Replay 05 — Match Watch-along (Best takes)',
     meta: 'Commentary • 22 min',
     href: '/live/replay/match-watchalong',
-    img: '/media/live/replays/replay-05.jpg',
+    image: '/media/live/replays/replay-05.jpg',
   },
   {
     title: 'Replay 06 — Fans & Culture: USA/MEX/CAN',
     meta: 'Culture • 20 min',
     href: '/live/replay/fans-culture',
-    img: '/media/live/replays/replay-06.jpg',
+    image: '/media/live/replays/replay-06.jpg',
   },
 ];
 
@@ -130,16 +130,14 @@ export default function LivePage() {
               <Link href="/live#replays">
                 <Button variant="secondary">View Replays</Button>
               </Link>
-              <Link href="/live#upcoming">
-                <Button variant="secondary">Upcoming Events</Button>
-              </Link>
+              <Button variant="secondary">Upcoming Events</Button>
               <Button variant="secondary">Share</Button>
             </div>
           </div>
         </Card>
 
         {/* UPCOMING */}
-        <div className="mt-10" id="upcoming">
+        <div className="mt-10">
           <SectionTitle
             eyebrow="Next"
             title="Upcoming Live"
@@ -169,22 +167,25 @@ export default function LivePage() {
             subtitle="Contenido evergreen + highlights (ideal para monetizar y crecer)."
             right={<Button variant="secondary">Ver todo</Button>}
           />
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {REPLAYS.map((r) => (
-              <Card key={r.title} className="overflow-hidden">
+              <Card key={r.href} className="overflow-hidden">
                 <div
                   className="aspect-video bg-cover bg-center"
-                  style={{ backgroundImage: `url('${r.img}')` }}
+                  style={{ backgroundImage: `url('${r.image}')` }}
                 />
                 <div className="p-5">
                   <div className="text-sm font-black">{r.title}</div>
                   <div className="mt-1 text-xs text-black/60">{r.meta}</div>
+
                   <div className="mt-4 grid grid-cols-2 gap-2">
-                    <Link href={r.href}>
+                    <Link href={r.href} className="block">
                       <Button variant="secondary" className="w-full">
                         ▶ Play
                       </Button>
                     </Link>
+
                     <Button variant="secondary" className="w-full">
                       ↗ Share
                     </Button>
